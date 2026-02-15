@@ -225,11 +225,11 @@ This script is maintained by the research team. For improvements:
 
 ## 📝 License
 
-[Your License Here]
+This project is licensed under the MIT License - see the LICENSE file for details.
 
 ## 👥 Team
 
-Developed by [Your University] AI Research Team for the YouTube Age Classification Project.
+Developed by FAST, Lahore 6th Semester AI Research Team for the YouTube Age Classification Project as well YouTube Content Analysis.
 
 ---
 
