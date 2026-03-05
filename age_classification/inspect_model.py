@@ -10,7 +10,7 @@ Usage:
 
 import torch
 import torch.nn as nn
-from hierarchical_roberta import create_model, ModelConfig
+from age_classification.hierarchical_roberta import create_model, ModelConfig
 from typing import Dict, List, Tuple
 import json
 

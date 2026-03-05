@@ -58,7 +58,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from tqdm import tqdm
 from transformers import RobertaTokenizer
 
-from hierarchical_roberta import HierarchicalRobertaForClassification, ModelConfig
+from age_classification.hierarchical_roberta import HierarchicalRobertaForClassification, ModelConfig
 
 
 # ─────────────────────────────────────────────────────────────────────────────

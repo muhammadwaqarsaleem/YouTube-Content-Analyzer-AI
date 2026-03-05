@@ -4,7 +4,7 @@ Example Usage Script for DatasetAnalyzer
 Demonstrates different ways to use the EDA analyzer programmatically.
 """
 
-from dataset_eda_analyzer import DatasetAnalyzer
+from age_classification.dataset_eda_analyzer import DatasetAnalyzer
 import sys
 
 def example_1_basic_usage():
