@@ -1,0 +1,13 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "extraPaths": [
+    "models/violence_detection",
+    "services"
+  ],
+  "executionEnvironments": [
+    {
+      "root": "."
+    }
+  ]
+}

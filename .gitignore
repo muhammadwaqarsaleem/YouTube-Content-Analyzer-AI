@@ -1,0 +1,48 @@
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Python caching
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Project specific temporary and downloaded files
+temp/
+cookies/
+youtube_cookies.txt
+*.log
+processed_images/
+features/
+processed_data/
+evaluation_results/
+
+# Large machine learning models (these should be downloaded separately by friends)
+models/*.h5
+models/*.pkl
+*.npz
+*.onnx
+
+# Build and distribution
+dist/
+build/
+*.egg-info/
+
+# OS generated files
+.DS_Store
+Thumbs.db
