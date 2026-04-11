@@ -33,7 +33,7 @@ import logging
 from sklearn.metrics import accuracy_score, f1_score, precision_score, recall_score, classification_report
 
 # Import our model
-from age_classification.hierarchical_roberta import (
+from hierarchical_roberta import (
     HierarchicalRobertaForClassification,
     ModelConfig,
     create_model

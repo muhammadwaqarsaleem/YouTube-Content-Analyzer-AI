@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>XAI Attention Report — YouTube Age Classifier</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Space+Mono:ital,wght@0,400;0,700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+/* ── Reset & tokens ──────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:      #0c0c10;
+  --surface: #141418;
+  --surface2:#1b1b22;
+  --border:  #28282f;
+  --text:    #e2e0d8;
+  --muted:   #666372;
+  --general: #52b788;
+  --teen:    #4895ef;
+  --mature:  #e63946;
+  --gold:    #f5c842;
+  --r:       10px;
+  --mono:'Space Mono',monospace;
+  --sans:'Lato',sans-serif;
+  --head:'Syne',sans-serif;
+}
+body{background:var(--bg);color:var(--text);font-family:var(--sans);
+      font-weight:300;line-height:1.7;padding:52px 20px 110px;}
+.wrap{max-width:1020px;margin:0 auto;}
+
+/* ── Header ──────────────────────────────────────────── */
+.site-header{
+  border-bottom:1px solid var(--border);
+  padding-bottom:38px;margin-bottom:54px;position:relative;
+}
+.site-header::after{
+  content:'';position:absolute;top:-40px;right:-60px;
+  width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,rgba(72,149,239,.1) 0%,transparent 68%);
+  pointer-events:none;
+}
+.overtitle{
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:14px;
+}
+h1{
+  font-family:var(--head);font-size:clamp(2.1rem,5vw,3.4rem);
+  font-weight:800;line-height:1.04;margin-bottom:14px;
+  background:linear-gradient(118deg,#fff 0%,#9b8fd4 55%,var(--teen) 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.intro{font-size:.93rem;color:var(--muted);max-width:640px;}
+.meta-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px;}
+.mpill{
+  font-family:var(--mono);font-size:.68rem;
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:999px;padding:4px 14px;color:var(--muted);
+}
+.mpill b{color:var(--text);}
+.stat-row{
+  display:flex;gap:16px;flex-wrap:wrap;margin-top:28px;
+}
+.stat-box{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:8px;padding:14px 22px;min-width:120px;
+}
+.stat-val{
+  font-family:var(--head);font-size:1.7rem;font-weight:800;
+  line-height:1.1;
+}
+.stat-lbl{font-size:.72rem;color:var(--muted);margin-top:2px;}
+
+/* ── Section heading ────────────────────────────────── */
+.sec-title{
+  font-family:var(--head);font-size:1.2rem;font-weight:700;
+  margin:54px 0 20px;padding-bottom:10px;
+  border-bottom:1px solid var(--border);letter-spacing:.01em;
+}
+
+/* ── Sample card ─────────────────────────────────────── */
+.sample-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-left:4px solid;border-radius:var(--r);
+  padding:28px 30px;margin-bottom:28px;
+}
+.card-header{
+  display:flex;justify-content:space-between;
+  align-items:flex-start;gap:16px;flex-wrap:wrap;
+  margin-bottom:22px;
+}
+.card-tag{
+  font-family:var(--mono);font-size:.63rem;
+  letter-spacing:.16em;text-transform:uppercase;
+  color:var(--muted);margin-bottom:6px;
+}
+.card-snippet{
+  font-size:.86rem;color:#9e9baa;font-style:italic;max-width:520px;
+}
+.badge-group{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+.badge{
+  font-family:var(--mono);font-size:.7rem;font-weight:700;
+  padding:5px 16px;border-radius:999px;border:1.5px solid;
+  letter-spacing:.04em;
+}
+.badge.general{color:var(--general);border-color:var(--general);background:rgba(82,183,136,.1);}
+.badge.teen{   color:var(--teen);   border-color:var(--teen);   background:rgba(72,149,239,.1);}
+.badge.mature{ color:var(--mature); border-color:var(--mature); background:rgba(230,57,70,.1); }
+.verdict{
+  font-family:var(--mono);font-size:.7rem;
+  padding:3px 10px;border-radius:4px;
+}
+.verdict.correct{color:var(--general);background:rgba(82,183,136,.12);}
+.verdict.wrong{  color:var(--mature); background:rgba(230,57,70,.12); }
+
+/* ── Two-col ────────────────────────────────────────── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:28px;}
+@media(max-width:600px){.two-col{grid-template-columns:1fr;}}
+.sub-title{
+  font-family:var(--mono);font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:10px;
+}
+
+/* ── Probability bars ───────────────────────────────── */
+.prob-row{display:flex;align-items:center;gap:8px;margin-bottom:7px;}
+.prob-lbl{font-family:var(--mono);font-size:.68rem;width:56px;
+           color:var(--muted);flex-shrink:0;}
+.prob-track{flex:1;background:#1f1f27;border-radius:4px;height:9px;overflow:hidden;}
+.prob-fill{height:100%;border-radius:4px;
+           transition:width .55s cubic-bezier(.4,0,.2,1);}
+.prob-val{font-family:var(--mono);font-size:.68rem;
+          color:var(--muted);width:40px;text-align:right;}
+.conf-note{font-size:.76rem;color:var(--muted);margin-top:10px;}
+.conf-note b{color:var(--text);}
+
+/* ── Attention bars ─────────────────────────────────── */
+.abar-scroll{max-height:290px;overflow-y:auto;padding-right:2px;}
+.abar-row{display:flex;align-items:center;gap:7px;margin-bottom:4px;}
+.abar-lbl{font-family:var(--mono);font-size:.6rem;
+          color:var(--muted);width:26px;flex-shrink:0;}
+.abar-track{flex:1;background:#1b1b22;border-radius:3px;
+            height:11px;position:relative;overflow:visible;}
+.abar-fill{height:100%;border-radius:3px;transition:width .4s ease;}
+.abar-uni{
+  position:absolute;top:-3px;bottom:-3px;
+  width:1.5px;background:rgba(255,255,255,.18);
+}
+.abar-val{font-family:var(--mono);font-size:.6rem;
+          color:var(--muted);width:46px;text-align:right;}
+
+/* ── Chunk cards ─────────────────────────────────────── */
+.chunk-list{display:flex;flex-direction:column;gap:12px;}
+.chunk-card{
+  background:var(--surface2);border:1px solid var(--border);
+  border-left:3px solid;border-radius:8px;padding:14px 18px;
+  transition:transform .15s;
+}
+.chunk-card:hover{transform:translateX(4px);}
+.chunk-meta{
+  display:flex;align-items:center;gap:14px;
+  font-family:var(--mono);font-size:.66rem;
+  color:var(--muted);margin-bottom:8px;
+}
+.chunk-medal{font-size:1rem;}
+.chunk-w{
+  margin-left:auto;background:var(--border);border-radius:4px;
+  padding:2px 8px;color:var(--gold);font-size:.63rem;
+}
+.chunk-text{
+  font-family:var(--mono);font-size:.74rem;color:#b2afc0;
+  line-height:1.65;white-space:pre-wrap;word-break:break-word;
+  max-height:175px;overflow-y:auto;
+}
+
+/* ── Footer ──────────────────────────────────────────── */
+footer{
+  margin-top:80px;padding-top:22px;
+  border-top:1px solid var(--border);
+  text-align:center;font-size:.76rem;color:var(--muted);
+}
+footer b{color:var(--text);}
+
+/* ── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:var(--surface2);}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:99px;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header class="site-header">
+  <p class="overtitle">University AI Research · YouTube Age Classification · File 4 of 4</p>
+  <h1>XAI Attention<br>Inspection Report</h1>
+  <p class="intro">
+    Chunk-level self-attention weights extracted from the Hierarchical RoBERTa model.
+    Each card reveals which segments of the transcript most strongly influenced
+    the classification decision, providing transparency for academic review.
+  </p>
+  <div class="meta-row">
+    <span class="mpill"><b>Generated</b> 2026-03-01  17:00</span>
+    <span class="mpill"><b>Samples shown</b> 6</span>
+    <span class="mpill"><b>Correct</b> 4 / 6</span>
+    <span class="mpill"><b>Chunking</b> 512 tok, 256 stride</span>
+    <span class="mpill"><b>Aggregation</b> Self-Attention Pooling</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat-box">
+      <div class="stat-val" style="color:var(--general)">G</div>
+      <div class="stat-lbl">General</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:var(--teen)">T</div>
+      <div class="stat-lbl">Teen</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-val" style="color:var(--mature)">M</div>
+      <div class="stat-lbl">Mature</div>
+    </div>
+  </div>
+</header>
+
+<h2 class="sec-title">Prediction Explanations (6 samples)</h2>
+
+
+<section class="sample-card" style="border-left-color:#52b788">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 1</p>
+      <p class="card-snippet">"Kind: captions Language: en Let's cook a blue lobster. Oh, it's on my shirt. I guess I deserve that. Wait, you didn't actually think I'd…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge general">General</span>
+      <span class="verdict correct">✓ correct</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:99.0%;background:#52b788"></div></div><span class="prob-val">99.0%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:1.0%;background:#4895ef"></div></div><span class="prob-val">1.0%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:0.0%;background:#e63946"></div></div><span class="prob-val">0.0%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>99.0%</b> &nbsp;·&nbsp;
+        Chunks used: <b>1</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:100.0%"></div></div><span class="abar-val">1.0000</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#52b788"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 00</span><span class="chunk-w">weight = 1.0000</span></div><pre class="chunk-text">Kind: captions Language: en Let's cook a blue lobster. Oh, it's on my shirt. I guess I deserve that. Wait, you
+didn't actually think I'd cook a blue lobster, right? Watch again carefully. He's totally fine.</pre></div>
+
+  </div>
+</section>
+
+
+<section class="sample-card" style="border-left-color:#52b788">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 2</p>
+      <p class="card-snippet">"Kind: captions Language: en Winter&lt;00:00:01.680&gt;&lt;c&gt; and&lt;/c&gt;&lt;00:00:01.920&gt;&lt;c&gt; early&lt;/c&gt;&lt;00:00:02.320&gt;&lt;c&gt; spring&lt;/c&gt;&lt;00:00:03.120&gt;&lt;c&gt;…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge general">General</span>
+      <span class="verdict correct">✓ correct</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:95.5%;background:#52b788"></div></div><span class="prob-val">95.5%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:3.7%;background:#4895ef"></div></div><span class="prob-val">3.7%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:0.8%;background:#e63946"></div></div><span class="prob-val">0.8%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>95.5%</b> &nbsp;·&nbsp;
+        Chunks used: <b>9</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:71.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.0949</span></div>
+<div class="abar-row"><span class="abar-lbl">C01</span><div class="abar-track"><div class="abar-fill" style="width:86.3%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1151</span></div>
+<div class="abar-row"><span class="abar-lbl">C02</span><div class="abar-track"><div class="abar-fill" style="width:80.6%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1076</span></div>
+<div class="abar-row"><span class="abar-lbl">C03</span><div class="abar-track"><div class="abar-fill" style="width:74.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.0993</span></div>
+<div class="abar-row"><span class="abar-lbl">C04</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1334</span></div>
+<div class="abar-row"><span class="abar-lbl">C05</span><div class="abar-track"><div class="abar-fill" style="width:79.6%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1062</span></div>
+<div class="abar-row"><span class="abar-lbl">C06</span><div class="abar-track"><div class="abar-fill" style="width:78.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1043</span></div>
+<div class="abar-row"><span class="abar-lbl">C07</span><div class="abar-track"><div class="abar-fill" style="width:88.8%;background:#52b788"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1185</span></div>
+<div class="abar-row"><span class="abar-lbl">C08</span><div class="abar-track"><div class="abar-fill" style="width:90.4%;background:#52b788"></div><div class="abar-uni"  style="left:83.3%"></div></div><span class="abar-val">0.1207</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#52b788"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 04</span><span class="chunk-w">weight = 0.1334</span></div><pre class="chunk-text">&lt;/c&gt;&lt;00:01:28.640&gt;&lt;c&gt; kilometer&lt;/c&gt;&lt;00:01:29.200&gt;&lt;c&gt; away.&lt;/c&gt; The&lt;00:01:34.640&gt;&lt;c&gt; sound&lt;/c&gt;&lt;00:01:34.880&gt;&lt;c&gt;
+wards&lt;/c&gt;&lt;00:01:35.360&gt;&lt;c&gt; off&lt;/c&gt;&lt;00:01:35.600&gt;&lt;c&gt; competitors&lt;/c&gt; and&lt;00:01:41.840&gt;&lt;c&gt;
+hopefully&lt;/c&gt;&lt;00:01:43.200&gt;&lt;c&gt; attracts&lt;/c&gt;&lt;00:01:43.600&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:01:43.840&gt;&lt;c&gt; mate.&lt;/c&gt;
+Females&lt;00:01:51.280&gt;&lt;c&gt; can&lt;/c&gt;&lt;00:01:51.439&gt;&lt;c&gt; be&lt;/c&gt;&lt;00:01:51.600&gt;&lt;c&gt; quick&lt;/c&gt;&lt;00:01:51.840&gt;&lt;c&gt;
+to&lt;/c&gt;&lt;00:01:52.000&gt;&lt;c&gt; respond,&lt;/c&gt; but&lt;00:02:01.680&gt;&lt;c&gt; they're&lt;/c&gt;&lt;00:02:01.920&gt;&lt;c&gt;
+not&lt;/c&gt;&lt;00:02:02.079&gt;&lt;c&gt; always&lt;/c&gt;&lt;00:02:02.399&gt;&lt;c&gt; quick&lt;/c&gt;&lt;00:02:02.960&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:02:03.200&gt;&lt;c&gt;
+pick&lt;/c&gt;&lt;00:02:03.439&gt;&lt;c&gt; a&lt;/c&gt; but they're not always quick to pick a partner. They&lt;00:02:12.720&gt;&lt;c&gt;
+lead&lt;/c&gt;&lt;00:02:12.959&gt;&lt;c&gt; males&lt;/c&gt;&lt;00:02:13.360&gt;&lt;c&gt; on&lt;/c&gt;&lt;00:02:13.440&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:02:13.599&gt;&lt;c&gt;
+merry&lt;/c&gt;&lt;00:02:14.000&gt;&lt;c&gt; dance&lt;/c&gt; They lead males on a merry dance before&lt;00:02:16.480&gt;&lt;c&gt;
+finally&lt;/c&gt;&lt;00:02:…</pre></div>
+<div class="chunk-card" style="border-left-color:#52b788"><div class="chunk-meta"><span class="chunk-medal">🥈</span><span>Chunk 08</span><span class="chunk-w">weight = 0.1207</span></div><pre class="chunk-text">03:07.200&gt;&lt;c&gt; eggs.&lt;/c&gt; Alligators&lt;00:03:12.239&gt;&lt;c&gt; are&lt;/c&gt;&lt;00:03:12.480&gt;&lt;c&gt; so&lt;/c&gt;&lt;00:03:12.720&gt;&lt;c&gt;
+successful&lt;/c&gt;&lt;00:03:13.280&gt;&lt;c&gt; here.&lt;/c&gt; Alligators are so successful here. They've&lt;00:03:14.640&gt;&lt;c&gt;
+dominated&lt;/c&gt;&lt;00:03:15.200&gt;&lt;c&gt; this&lt;/c&gt;&lt;00:03:15.440&gt;&lt;c&gt; landscape&lt;/c&gt;&lt;00:03:15.920&gt;&lt;c&gt; for&lt;/c&gt; They've
+dominated this landscape for millennia. But&lt;00:03:18.159&gt;&lt;c&gt; now&lt;/c&gt;&lt;00:03:18.400&gt;&lt;c&gt;
+their&lt;/c&gt;&lt;00:03:18.720&gt;&lt;c&gt; freshwater&lt;/c&gt;&lt;00:03:19.280&gt;&lt;c&gt; habitat&lt;/c&gt;&lt;00:03:20.720&gt;&lt;c&gt; is&lt;/c&gt; But now their
+freshwater habitat is under&lt;00:03:21.360&gt;&lt;c&gt; serious&lt;/c&gt;&lt;00:03:21.840&gt;&lt;c&gt; threat.&lt;/c&gt;</pre></div>
+<div class="chunk-card" style="border-left-color:#52b788"><div class="chunk-meta"><span class="chunk-medal">🥉</span><span>Chunk 07</span><span class="chunk-w">weight = 0.1185</span></div><pre class="chunk-text">&lt;/c&gt;&lt;00:02:57.200&gt;&lt;c&gt; turn&lt;/c&gt;&lt;00:02:57.519&gt;&lt;c&gt; their&lt;/c&gt;&lt;00:02:57.760&gt;&lt;c&gt; attention&lt;/c&gt;&lt;00:02:58.239&gt;&lt;c&gt;
+to&lt;/c&gt; but females now turn their attention to building&lt;00:02:58.720&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:02:58.959&gt;&lt;c&gt; nest.&lt;/c&gt;
+in&lt;00:03:03.920&gt;&lt;c&gt; just&lt;/c&gt;&lt;00:03:04.080&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:03:04.239&gt;&lt;c&gt; month's&lt;/c&gt;&lt;00:03:04.560&gt;&lt;c&gt;
+time.&lt;/c&gt;&lt;00:03:05.760&gt;&lt;c&gt; It&lt;/c&gt;&lt;00:03:06.000&gt;&lt;c&gt; needs&lt;/c&gt;&lt;00:03:06.159&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:03:06.319&gt;&lt;c&gt; be&lt;/c&gt;
+in just a month's time. It needs to be ready&lt;00:03:06.720&gt;&lt;c&gt; for&lt;/c&gt;&lt;00:03:06.959&gt;&lt;c&gt;
+their&lt;/c&gt;&lt;00:03:07.200&gt;&lt;c&gt; eggs.&lt;/c&gt; Alligators&lt;00:03:12.239&gt;&lt;c&gt; are&lt;/c&gt;&lt;00:03:12.480&gt;&lt;c&gt;
+so&lt;/c&gt;&lt;00:03:12.720&gt;&lt;c&gt; successful&lt;/c&gt;&lt;00:03:13.280&gt;&lt;c&gt; here.&lt;/c&gt; Alligators are so successful here.
+They've&lt;00:03:14.640&gt;&lt;c&gt; dominated&lt;/c&gt;&lt;00:03:15.200&gt;&lt;c&gt; this&lt;/c&gt;&lt;00:03:15.440&gt;&lt;c&gt;
+landscape&lt;/c&gt;&lt;00:03:15.920&gt;&lt;c&gt; for&lt;/c&gt; They've dominated this landscape for millennia. But&lt;00:03:18.159&gt;&lt;c&gt;
+now&lt;/c&gt;&lt;00:03…</pre></div>
+
+  </div>
+</section>
+
+
+<section class="sample-card" style="border-left-color:#4895ef">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 3</p>
+      <p class="card-snippet">"Kind: captions Language: en Hello&lt;00:00:02.720&gt;&lt;c&gt; ad.&lt;/c&gt;&lt;00:00:03.919&gt;&lt;c&gt; It's&lt;/c&gt;&lt;00:00:04.240&gt;&lt;c&gt; me&lt;/c&gt;&lt;00:00:04.960&gt;&lt;c&gt;…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge teen">Teen</span>
+      <span class="verdict correct">✓ correct</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:2.5%;background:#52b788"></div></div><span class="prob-val">2.5%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:92.9%;background:#4895ef"></div></div><span class="prob-val">92.9%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:4.6%;background:#e63946"></div></div><span class="prob-val">4.6%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>92.9%</b> &nbsp;·&nbsp;
+        Chunks used: <b>18</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:36.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0394</span></div>
+<div class="abar-row"><span class="abar-lbl">C01</span><div class="abar-track"><div class="abar-fill" style="width:48.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0522</span></div>
+<div class="abar-row"><span class="abar-lbl">C02</span><div class="abar-track"><div class="abar-fill" style="width:62.8%;background:#4895ef"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0674</span></div>
+<div class="abar-row"><span class="abar-lbl">C03</span><div class="abar-track"><div class="abar-fill" style="width:50.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0541</span></div>
+<div class="abar-row"><span class="abar-lbl">C04</span><div class="abar-track"><div class="abar-fill" style="width:47.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0514</span></div>
+<div class="abar-row"><span class="abar-lbl">C05</span><div class="abar-track"><div class="abar-fill" style="width:59.0%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0633</span></div>
+<div class="abar-row"><span class="abar-lbl">C06</span><div class="abar-track"><div class="abar-fill" style="width:38.5%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0413</span></div>
+<div class="abar-row"><span class="abar-lbl">C07</span><div class="abar-track"><div class="abar-fill" style="width:46.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0502</span></div>
+<div class="abar-row"><span class="abar-lbl">C08</span><div class="abar-track"><div class="abar-fill" style="width:44.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0481</span></div>
+<div class="abar-row"><span class="abar-lbl">C09</span><div class="abar-track"><div class="abar-fill" style="width:62.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0670</span></div>
+<div class="abar-row"><span class="abar-lbl">C10</span><div class="abar-track"><div class="abar-fill" style="width:96.2%;background:#4895ef"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.1033</span></div>
+<div class="abar-row"><span class="abar-lbl">C11</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.1073</span></div>
+<div class="abar-row"><span class="abar-lbl">C12</span><div class="abar-track"><div class="abar-fill" style="width:31.3%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0336</span></div>
+<div class="abar-row"><span class="abar-lbl">C13</span><div class="abar-track"><div class="abar-fill" style="width:38.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0417</span></div>
+<div class="abar-row"><span class="abar-lbl">C14</span><div class="abar-track"><div class="abar-fill" style="width:31.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0342</span></div>
+<div class="abar-row"><span class="abar-lbl">C15</span><div class="abar-track"><div class="abar-fill" style="width:30.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0330</span></div>
+<div class="abar-row"><span class="abar-lbl">C16</span><div class="abar-track"><div class="abar-fill" style="width:52.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0566</span></div>
+<div class="abar-row"><span class="abar-lbl">C17</span><div class="abar-track"><div class="abar-fill" style="width:52.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:51.8%"></div></div><span class="abar-val">0.0559</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 11</span><span class="chunk-w">weight = 0.1073</span></div><pre class="chunk-text">00:01:02.079&gt;&lt;c&gt; we&lt;/c&gt; nice little fire chill out spot where we can&lt;00:01:02.399&gt;&lt;c&gt;
+make&lt;/c&gt;&lt;00:01:02.559&gt;&lt;c&gt; some&lt;/c&gt;&lt;00:01:02.879&gt;&lt;c&gt; smalls&lt;/c&gt;&lt;00:01:03.280&gt;&lt;c&gt; or&lt;/c&gt;&lt;00:01:03.520&gt;&lt;c&gt;
+cook&lt;/c&gt;&lt;00:01:03.760&gt;&lt;c&gt; some&lt;/c&gt; can make some smalls or cook some stuff.&quot;&lt;00:01:04.400&gt;&lt;c&gt;
+And&lt;/c&gt;&lt;00:01:04.559&gt;&lt;c&gt; we&lt;/c&gt;&lt;00:01:04.799&gt;&lt;c&gt; put&lt;/c&gt;&lt;00:01:04.960&gt;&lt;c&gt; cushions&lt;/c&gt;&lt;00:01:05.439&gt;&lt;c&gt;
+here&lt;/c&gt; stuff.&quot; And we put cushions here sometimes.&lt;00:01:06.320&gt;&lt;c&gt; And&lt;/c&gt;&lt;00:01:06.880&gt;&lt;c&gt;
+that's&lt;/c&gt;&lt;00:01:07.200&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:01:07.360&gt;&lt;c&gt; cute&lt;/c&gt;&lt;00:01:07.520&gt;&lt;c&gt; little&lt;/c&gt; sometimes. And that's
+a cute little bench.&lt;00:01:08.320&gt;&lt;c&gt; If&lt;/c&gt;&lt;00:01:08.479&gt;&lt;c&gt; anyone&lt;/c&gt;&lt;00:01:08.799&gt;&lt;c&gt;
+needs&lt;/c&gt;&lt;00:01:08.960&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:01:09.119&gt;&lt;c&gt; have&lt;/c&gt;&lt;00:01:09.200&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:01:09.360&gt;&lt;c&gt; first&lt;/c&gt;
+bench. If anyone needs to have a first kiss&lt;00:01:09.920&gt;&lt;c&gt; or&lt;/c&gt;&lt;00:01:10.080&gt;&lt;c&gt;
+anything,&lt;/c&gt;&lt;00:01:10…</pre></div>
+<div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥈</span><span>Chunk 10</span><span class="chunk-w">weight = 0.1033</span></div><pre class="chunk-text">&gt;&lt;00:00:58.399&gt;&lt;c&gt; live&lt;/c&gt;&lt;00:00:58.559&gt;&lt;c&gt; in&lt;/c&gt;&lt;00:00:58.719&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:00:58.879&gt;&lt;c&gt; house.&quot;&lt;/c&gt;
+person that used to live in the house.&quot; Instead,&lt;00:00:59.600&gt;&lt;c&gt; I&lt;/c&gt;&lt;00:00:59.760&gt;&lt;c&gt;
+thought,&lt;/c&gt;&lt;00:00:59.840&gt;&lt;c&gt; &quot;Let's&lt;/c&gt;&lt;00:01:00.160&gt;&lt;c&gt; make&lt;/c&gt;&lt;00:01:00.239&gt;&lt;c&gt; this&lt;/c&gt;&lt;00:01:00.480&gt;&lt;c&gt;
+a&lt;/c&gt; Instead, I thought, &quot;Let's make this a nice&lt;00:01:00.800&gt;&lt;c&gt; little&lt;/c&gt;&lt;00:01:00.960&gt;&lt;c&gt;
+fire&lt;/c&gt;&lt;00:01:01.280&gt;&lt;c&gt; chill&lt;/c&gt;&lt;00:01:01.520&gt;&lt;c&gt; out&lt;/c&gt;&lt;00:01:01.680&gt;&lt;c&gt; spot&lt;/c&gt;&lt;00:01:01.920&gt;&lt;c&gt;
+where&lt;/c&gt;&lt;00:01:02.079&gt;&lt;c&gt; we&lt;/c&gt; nice little fire chill out spot where we can&lt;00:01:02.399&gt;&lt;c&gt;
+make&lt;/c&gt;&lt;00:01:02.559&gt;&lt;c&gt; some&lt;/c&gt;&lt;00:01:02.879&gt;&lt;c&gt; smalls&lt;/c&gt;&lt;00:01:03.280&gt;&lt;c&gt; or&lt;/c&gt;&lt;00:01:03.520&gt;&lt;c&gt;
+cook&lt;/c&gt;&lt;00:01:03.760&gt;&lt;c&gt; some&lt;/c&gt; can make some smalls or cook some stuff.&quot;&lt;00:01:04.400&gt;&lt;c&gt;
+And&lt;/c&gt;&lt;00:01:04.559&gt;&lt;c&gt; we&lt;/c&gt;&lt;00:01:04.799&gt;&lt;c&gt; put&lt;/c&gt;&lt;00:01:04.960&gt;&lt;c&gt; cushions&lt;/c&gt;&lt;00:01:05.439&gt;&lt;c…</pre></div>
+<div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥉</span><span>Chunk 02</span><span class="chunk-w">weight = 0.0674</span></div><pre class="chunk-text"> Arthur Rakam, one of my&lt;00:00:14.080&gt;&lt;c&gt; favorite&lt;/c&gt;&lt;00:00:14.320&gt;&lt;c&gt; artists.&lt;/c&gt;&lt;00:00:14.880&gt;&lt;c&gt;
+He&lt;/c&gt;&lt;00:00:15.120&gt;&lt;c&gt; did&lt;/c&gt;&lt;00:00:15.280&gt;&lt;c&gt; all&lt;/c&gt;&lt;00:00:15.440&gt;&lt;c&gt; the&lt;/c&gt; my favorite artists. He did
+all the illustration&lt;00:00:16.080&gt;&lt;c&gt; for&lt;/c&gt;&lt;00:00:16.240&gt;&lt;c&gt; Alice&lt;/c&gt;&lt;00:00:16.560&gt;&lt;c&gt;
+in&lt;/c&gt;&lt;00:00:16.800&gt;&lt;c&gt; Wonderland,&lt;/c&gt; illustration for Alice in Wonderland, Red&lt;00:00:17.920&gt;&lt;c&gt;
+Riding&lt;/c&gt;&lt;00:00:18.320&gt;&lt;c&gt; Hood.&lt;/c&gt;&lt;00:00:19.119&gt;&lt;c&gt; My&lt;/c&gt;&lt;00:00:19.439&gt;&lt;c&gt; name&lt;/c&gt;&lt;00:00:20.160&gt;&lt;c&gt;
+in&lt;/c&gt;&lt;00:00:20.400&gt;&lt;c&gt; my&lt;/c&gt;&lt;00:00:20.640&gt;&lt;c&gt; language&lt;/c&gt; Red Riding Hood. My name in my language
+also&lt;00:00:21.439&gt;&lt;c&gt; means&lt;/c&gt;&lt;00:00:21.840&gt;&lt;c&gt; time.&lt;/c&gt;&lt;00:00:22.320&gt;&lt;c&gt; So&lt;/c&gt;&lt;00:00:22.480&gt;&lt;c&gt;
+that&lt;/c&gt;&lt;00:00:22.720&gt;&lt;c&gt; was&lt;/c&gt;&lt;00:00:22.800&gt;&lt;c&gt; like&lt;/c&gt;&lt;00:00:22.960&gt;&lt;c&gt; a&lt;/c&gt; also means time. So that
+was like a little&lt;00:00:23.519&gt;&lt;c&gt; personal&lt;/c&gt;&lt;00:00:24.480&gt;&lt;c&gt; connection&lt;/c&gt;&lt;00:00…</pre></div>
+
+  </div>
+</section>
+
+
+<section class="sample-card" style="border-left-color:#e63946">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 4</p>
+      <p class="card-snippet">"Kind: captions Language: en [Music] hello&lt;00:00:15.599&gt;&lt;c&gt; everyone&lt;/c&gt; hello everyone welcome&lt;00:00:17.039&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:00:17.199&gt;&lt;c&gt;…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge mature">Mature</span>
+      <span class="verdict wrong">✗ true: Teen</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:32.2%;background:#52b788"></div></div><span class="prob-val">32.2%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:18.9%;background:#4895ef"></div></div><span class="prob-val">18.9%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:48.8%;background:#e63946"></div></div><span class="prob-val">48.8%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>48.8%</b> &nbsp;·&nbsp;
+        Chunks used: <b>20</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:51.5%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0393</span></div>
+<div class="abar-row"><span class="abar-lbl">C01</span><div class="abar-track"><div class="abar-fill" style="width:85.6%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0653</span></div>
+<div class="abar-row"><span class="abar-lbl">C02</span><div class="abar-track"><div class="abar-fill" style="width:80.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0611</span></div>
+<div class="abar-row"><span class="abar-lbl">C03</span><div class="abar-track"><div class="abar-fill" style="width:66.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0506</span></div>
+<div class="abar-row"><span class="abar-lbl">C04</span><div class="abar-track"><div class="abar-fill" style="width:62.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0479</span></div>
+<div class="abar-row"><span class="abar-lbl">C05</span><div class="abar-track"><div class="abar-fill" style="width:60.5%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0461</span></div>
+<div class="abar-row"><span class="abar-lbl">C06</span><div class="abar-track"><div class="abar-fill" style="width:50.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0382</span></div>
+<div class="abar-row"><span class="abar-lbl">C07</span><div class="abar-track"><div class="abar-fill" style="width:51.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0394</span></div>
+<div class="abar-row"><span class="abar-lbl">C08</span><div class="abar-track"><div class="abar-fill" style="width:43.3%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0331</span></div>
+<div class="abar-row"><span class="abar-lbl">C09</span><div class="abar-track"><div class="abar-fill" style="width:80.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0611</span></div>
+<div class="abar-row"><span class="abar-lbl">C10</span><div class="abar-track"><div class="abar-fill" style="width:98.9%;background:#e63946"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0755</span></div>
+<div class="abar-row"><span class="abar-lbl">C11</span><div class="abar-track"><div class="abar-fill" style="width:88.4%;background:#e63946"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0674</span></div>
+<div class="abar-row"><span class="abar-lbl">C12</span><div class="abar-track"><div class="abar-fill" style="width:53.6%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0409</span></div>
+<div class="abar-row"><span class="abar-lbl">C13</span><div class="abar-track"><div class="abar-fill" style="width:52.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0403</span></div>
+<div class="abar-row"><span class="abar-lbl">C14</span><div class="abar-track"><div class="abar-fill" style="width:53.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0411</span></div>
+<div class="abar-row"><span class="abar-lbl">C15</span><div class="abar-track"><div class="abar-fill" style="width:58.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0445</span></div>
+<div class="abar-row"><span class="abar-lbl">C16</span><div class="abar-track"><div class="abar-fill" style="width:59.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0453</span></div>
+<div class="abar-row"><span class="abar-lbl">C17</span><div class="abar-track"><div class="abar-fill" style="width:60.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0459</span></div>
+<div class="abar-row"><span class="abar-lbl">C18</span><div class="abar-track"><div class="abar-fill" style="width:53.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0407</span></div>
+<div class="abar-row"><span class="abar-lbl">C19</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0763</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 19</span><span class="chunk-w">weight = 0.0763</span></div><pre class="chunk-text">:39.440&gt;&lt;c&gt; in&lt;/c&gt;&lt;00:03:39.640&gt;&lt;c&gt; 1935&lt;/c&gt;&lt;00:03:40.879&gt;&lt;c&gt; with&lt;/c&gt;&lt;00:03:41.280&gt;&lt;c&gt;
+lyrics&lt;/c&gt;&lt;00:03:41.840&gt;&lt;c&gt; by&lt;/c&gt; it was written in 1935 with lyrics by point&lt;00:03:42.480&gt;&lt;c&gt;
+tien&lt;/c&gt;&lt;00:03:42.959&gt;&lt;c&gt; han&lt;/c&gt; point tien han and&lt;00:03:43.920&gt;&lt;c&gt; music&lt;/c&gt;&lt;00:03:44.480&gt;&lt;c&gt;
+by&lt;/c&gt;&lt;00:03:44.720&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:03:44.799&gt;&lt;c&gt; composer&lt;/c&gt;&lt;00:03:45.519&gt;&lt;c&gt; near-earth&lt;/c&gt; and music by the
+composer near-earth honoring&lt;00:03:47.760&gt;&lt;c&gt; those&lt;/c&gt;&lt;00:03:48.400&gt;&lt;c&gt; who&lt;/c&gt;&lt;00:03:48.640&gt;&lt;c&gt;
+went&lt;/c&gt;&lt;00:03:48.879&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:03:48.959&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:03:49.200&gt;&lt;c&gt; front&lt;/c&gt;&lt;00:03:49.840&gt;&lt;c&gt; to&lt;/c&gt;
+honoring those who went to the front to fight&lt;00:03:50.319&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:03:50.480&gt;&lt;c&gt;
+japanese&lt;/c&gt;&lt;00:03:51.120&gt;&lt;c&gt; invaders&lt;/c&gt; fight the japanese invaders in&lt;00:03:52.319&gt;&lt;c&gt;
+the&lt;/c&gt;&lt;00:03:52.480&gt;&lt;c&gt; northeast&lt;/c&gt;&lt;00:03:53.280&gt;&lt;c&gt; china&lt;/c&gt;&lt;00:03:53.920&gt;&lt;c&gt; in&lt;/c&gt;&lt;00:03:54.000&gt;&lt;c&gt;
+the&lt;/c&gt;&lt;00:03:5…</pre></div>
+<div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥈</span><span>Chunk 10</span><span class="chunk-w">weight = 0.0755</span></div><pre class="chunk-text">:00.960&gt;&lt;c&gt; design&lt;/c&gt;&lt;00:02:01.439&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:01.680&gt;&lt;c&gt; our&lt;/c&gt;&lt;00:02:01.920&gt;&lt;c&gt;
+four&lt;/c&gt;&lt;00:02:02.240&gt;&lt;c&gt; small&lt;/c&gt;&lt;00:02:02.640&gt;&lt;c&gt; stars&lt;/c&gt; the design of our four small stars
+surrounding&lt;00:02:04.159&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:02:04.240&gt;&lt;c&gt; bigger&lt;/c&gt;&lt;00:02:04.640&gt;&lt;c&gt; one&lt;/c&gt; surrounding a bigger
+one signifies&lt;00:02:06.159&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:06.320&gt;&lt;c&gt; unity&lt;/c&gt;&lt;00:02:06.960&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:07.040&gt;&lt;c&gt;
+the&lt;/c&gt;&lt;00:02:07.280&gt;&lt;c&gt; chinese&lt;/c&gt; signifies the unity of the chinese people under&lt;00:02:09.039&gt;&lt;c&gt;
+the&lt;/c&gt;&lt;00:02:09.200&gt;&lt;c&gt; leadership&lt;/c&gt;&lt;00:02:10.239&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:10.399&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:10.560&gt;&lt;c&gt;
+communist&lt;/c&gt; under the leadership of the communist party&lt;00:02:11.760&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:11.920&gt;&lt;c&gt; china&lt;/c&gt;
+party of china abbreviated&lt;00:02:13.599&gt;&lt;c&gt; as&lt;/c&gt;&lt;00:02:13.840&gt;&lt;c&gt; cpc&lt;/c&gt;&lt;00:02:14.959&gt;&lt;c&gt; jungkook&lt;/c&gt;
+this&lt;00:02:18.560&gt;&lt;c&gt; is&lt;/c&gt;&lt;00:02:18.720&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:02:18.879&gt;&lt;c&gt; pictu…</pre></div>
+<div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥉</span><span>Chunk 11</span><span class="chunk-w">weight = 0.0674</span></div><pre class="chunk-text">c&gt; of&lt;/c&gt;&lt;00:02:10.399&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:10.560&gt;&lt;c&gt; communist&lt;/c&gt; under the leadership of the communist
+party&lt;00:02:11.760&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:11.920&gt;&lt;c&gt; china&lt;/c&gt; party of china abbreviated&lt;00:02:13.599&gt;&lt;c&gt;
+as&lt;/c&gt;&lt;00:02:13.840&gt;&lt;c&gt; cpc&lt;/c&gt;&lt;00:02:14.959&gt;&lt;c&gt; jungkook&lt;/c&gt; this&lt;00:02:18.560&gt;&lt;c&gt; is&lt;/c&gt;&lt;00:02:18.720&gt;&lt;c&gt;
+a&lt;/c&gt;&lt;00:02:18.879&gt;&lt;c&gt; picture&lt;/c&gt;&lt;00:02:19.360&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:19.520&gt;&lt;c&gt; our&lt;/c&gt;&lt;00:02:19.680&gt;&lt;c&gt;
+national&lt;/c&gt;&lt;00:02:20.840&gt;&lt;c&gt; emblem&lt;/c&gt; this is a picture of our national emblem on&lt;00:02:22.400&gt;&lt;c&gt;
+18&lt;/c&gt;&lt;00:02:22.959&gt;&lt;c&gt; june&lt;/c&gt;&lt;00:02:23.599&gt;&lt;c&gt; 1950&lt;/c&gt; on 18 june 1950 the&lt;00:02:25.680&gt;&lt;c&gt;
+second&lt;/c&gt;&lt;00:02:26.080&gt;&lt;c&gt; session&lt;/c&gt;&lt;00:02:26.560&gt;&lt;c&gt; of&lt;/c&gt;&lt;00:02:26.720&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:26.879&gt;&lt;c&gt;
+first&lt;/c&gt;&lt;00:02:27.400&gt;&lt;c&gt; cppcc&lt;/c&gt; the second session of the first cppcc national&lt;00:02:28.959&gt;&lt;c&gt;
+committee&lt;/c&gt;&lt;00:02:30.080&gt;&lt;c&gt; adopted&lt;/c&gt;&lt;00:02:30.560&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:30.720&gt;…</pre></div>
+
+  </div>
+</section>
+
+
+<section class="sample-card" style="border-left-color:#e63946">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 5</p>
+      <p class="card-snippet">"Kind: captions Language: en (piano plays) ( Piano Moment ) ( Little Piano Moment ) Old McDonald Had a farm...EYA EYA YOOOOOW!! Old…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge mature">Mature</span>
+      <span class="verdict correct">✓ correct</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:0.2%;background:#52b788"></div></div><span class="prob-val">0.2%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:0.5%;background:#4895ef"></div></div><span class="prob-val">0.5%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:99.3%;background:#e63946"></div></div><span class="prob-val">99.3%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>99.3%</b> &nbsp;·&nbsp;
+        Chunks used: <b>6</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:64.5%;background:#e63946"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.1891</span></div>
+<div class="abar-row"><span class="abar-lbl">C01</span><div class="abar-track"><div class="abar-fill" style="width:95.2%;background:#e63946"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.2792</span></div>
+<div class="abar-row"><span class="abar-lbl">C02</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.2933</span></div>
+<div class="abar-row"><span class="abar-lbl">C03</span><div class="abar-track"><div class="abar-fill" style="width:62.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.1822</span></div>
+<div class="abar-row"><span class="abar-lbl">C04</span><div class="abar-track"><div class="abar-fill" style="width:9.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.0288</span></div>
+<div class="abar-row"><span class="abar-lbl">C05</span><div class="abar-track"><div class="abar-fill" style="width:9.4%;background:#2e2e3a"></div><div class="abar-uni"  style="left:56.8%"></div></div><span class="abar-val">0.0274</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 02</span><span class="chunk-w">weight = 0.2933</span></div><pre class="chunk-text"> doodle - doo Cock - a - doodle - doo Cock - a - doodle - doodle - doodle - doodle-doodle-doo, Old MacDonald
+had a farm, e-i-e-i-o,  e-i-e-i-o. *animal noises* (Music plays) THE DUCKS ON THE FARM SAY QUACK QUACK QUACK
+THE MICE ON THE FARM SAY SQUEAK SQUEAK SQUEAK THE CHICKENS ON THE FARM SAY CLUCK CLUCK CLUCK QUACK SQUEAK
+CLUCK (Music) (Music) (Piano) (Music) (Piano) ♪ ♪ ♪ ♪ ♪ ♪ The pigs on the farm say oink oink oink ♪ ♪ ♪ The
+goats on the farm say Meh Meh Meh The sheep on the farm say Baa Baa Baa Meh Baa *horse lets out a neigh* *cow
+lets out a moo* *mouse laughs joyfully* The horses on the farm say, &quot;NEIGH NEIGH NEIGH!&quot; The cows on the farm
+say, &quot;MOO MOO MOO!&quot; The roosters on the farm say COCK-A-DOODLE-DOOOOOOO!!!!!!!!!!! Neigh! Moo! COCK-A-DOODLE-
+DOOOOO!!!!!!! :D Neigh Moo cock- A- doodle- doo Music plays Lets Try it a little faster The ducks on the farm
+say Quack- Quack- Quack The …</pre></div>
+<div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥈</span><span>Chunk 01</span><span class="chunk-w">weight = 0.2792</span></div><pre class="chunk-text"> say? Quack? Tweet Tweet? Oink? With an oink oink here And an oink oink there Here an oink. There an oink
+Everywhere an oink oink Old McDonald had a  farm e-i-e-i-o. Old McDonald had a farm e-i-e-i-o. And on that
+farm he had a sheep. e-i-e-i-o. What does a sheep say? Cluck Cluck? Baaa? With a baaa baaa here, and a baaa
+baaa there. Here a baaa. There a baaa Everywhere a baaa baaa. Old McDonald had a farm E-I-E-I-O. And on that
+farm he had a duck e-i-e-i-o. What does a duck say? Meow? Quack quack? With a quack quack here And a quack
+quack there Here a quack There a quack Everywhere a quack quack And on that farm he had a rooster e-i-e-i-o
+What does a rooster say? Ribbit? Cock - a - doodle -  doo? With a cock - a - doodle - doo Cock - a - doodle -
+doo Cock - a - doodle - doodle - doodle - doodle-doodle-doo, Old MacDonald had a farm, e-i-e-i-o,  e-i-e-i-o.
+*animal noises* (Music plays) THE D…</pre></div>
+<div class="chunk-card" style="border-left-color:#e63946"><div class="chunk-meta"><span class="chunk-medal">🥉</span><span>Chunk 00</span><span class="chunk-w">weight = 0.1891</span></div><pre class="chunk-text">Kind: captions Language: en (piano plays) ( Piano Moment ) ( Little Piano Moment ) Old McDonald Had a
+farm...EYA EYA YOOOOOW!! Old MacDonald's had a farm And on the farm he had a cow What does the cow say jj Oink
+With a moo moo here, and a moo moo there Here a moo, There a moo, Everywhere a moo moo, Here moo The moo Old
+MacDonald had a farm Old Mcdonald had a farm. E - I - E - I - O. Old Mcdonald had a farm Old Mcdonald  had a
+farm, E-I-E-I-O And on that farm he had a horse. E - I - E - I - O. What does the horse say? Woof Woof? Moo?
+Neigh? With a neigh neigh here, and a neigh neigh there. Here a neigh. There a neigh. Everywhere a neigh
+neigh. Old McDonald had a farm E - I - E - I - O. Old Mcdonald had a farm E - I - E - I - O. And on that farm
+he had a pig. E - I - E - I - O. What does a pig say? Quack? Tweet Tweet? Oink? With an oink oink here And an
+oink oink there Here an oink. There…</pre></div>
+
+  </div>
+</section>
+
+
+<section class="sample-card" style="border-left-color:#4895ef">
+  <div class="card-header">
+    <div class="card-meta">
+      <p class="card-tag">Sample 6</p>
+      <p class="card-snippet">"Kind: captions Language: en Welcome&lt;00:00:00.560&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:00:00.960&gt;&lt;c&gt; Miami&lt;/c&gt;&lt;00:00:01.600&gt;&lt;c&gt; and&lt;/c&gt;&lt;00:00:01.760&gt;&lt;c&gt;…"</p>
+    </div>
+    <div class="badge-group">
+      <span class="badge teen">Teen</span>
+      <span class="verdict wrong">✗ true: Mature</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div>
+      <h4 class="sub-title">Class Probabilities</h4>
+      <div class="prob-row"><span class="prob-lbl">General</span><div class="prob-track"><div class="prob-fill" style="width:23.1%;background:#52b788"></div></div><span class="prob-val">23.1%</span></div>
+<div class="prob-row"><span class="prob-lbl">Teen</span><div class="prob-track"><div class="prob-fill" style="width:48.6%;background:#4895ef"></div></div><span class="prob-val">48.6%</span></div>
+<div class="prob-row"><span class="prob-lbl">Mature</span><div class="prob-track"><div class="prob-fill" style="width:28.3%;background:#e63946"></div></div><span class="prob-val">28.3%</span></div>
+
+      <p class="conf-note">
+        Confidence: <b>48.6%</b> &nbsp;·&nbsp;
+        Chunks used: <b>20</b>
+      </p>
+    </div>
+    <div>
+      <h4 class="sub-title">Chunk Attention Weights</h4>
+      <div class="abar-scroll">
+        <div class="abar-row"><span class="abar-lbl">C00</span><div class="abar-track"><div class="abar-fill" style="width:77.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0588</span></div>
+<div class="abar-row"><span class="abar-lbl">C01</span><div class="abar-track"><div class="abar-fill" style="width:36.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0276</span></div>
+<div class="abar-row"><span class="abar-lbl">C02</span><div class="abar-track"><div class="abar-fill" style="width:59.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0456</span></div>
+<div class="abar-row"><span class="abar-lbl">C03</span><div class="abar-track"><div class="abar-fill" style="width:70.1%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0534</span></div>
+<div class="abar-row"><span class="abar-lbl">C04</span><div class="abar-track"><div class="abar-fill" style="width:59.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0455</span></div>
+<div class="abar-row"><span class="abar-lbl">C05</span><div class="abar-track"><div class="abar-fill" style="width:50.3%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0383</span></div>
+<div class="abar-row"><span class="abar-lbl">C06</span><div class="abar-track"><div class="abar-fill" style="width:65.8%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0501</span></div>
+<div class="abar-row"><span class="abar-lbl">C07</span><div class="abar-track"><div class="abar-fill" style="width:74.3%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0566</span></div>
+<div class="abar-row"><span class="abar-lbl">C08</span><div class="abar-track"><div class="abar-fill" style="width:80.7%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0615</span></div>
+<div class="abar-row"><span class="abar-lbl">C09</span><div class="abar-track"><div class="abar-fill" style="width:91.3%;background:#4895ef"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0695</span></div>
+<div class="abar-row"><span class="abar-lbl">C10</span><div class="abar-track"><div class="abar-fill" style="width:47.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0360</span></div>
+<div class="abar-row"><span class="abar-lbl">C11</span><div class="abar-track"><div class="abar-fill" style="width:51.0%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0388</span></div>
+<div class="abar-row"><span class="abar-lbl">C12</span><div class="abar-track"><div class="abar-fill" style="width:59.0%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0450</span></div>
+<div class="abar-row"><span class="abar-lbl">C13</span><div class="abar-track"><div class="abar-fill" style="width:58.9%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0448</span></div>
+<div class="abar-row"><span class="abar-lbl">C14</span><div class="abar-track"><div class="abar-fill" style="width:69.0%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0526</span></div>
+<div class="abar-row"><span class="abar-lbl">C15</span><div class="abar-track"><div class="abar-fill" style="width:64.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0489</span></div>
+<div class="abar-row"><span class="abar-lbl">C16</span><div class="abar-track"><div class="abar-fill" style="width:100.0%;background:#f5c842"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0762</span></div>
+<div class="abar-row"><span class="abar-lbl">C17</span><div class="abar-track"><div class="abar-fill" style="width:89.4%;background:#4895ef"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0681</span></div>
+<div class="abar-row"><span class="abar-lbl">C18</span><div class="abar-track"><div class="abar-fill" style="width:55.0%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0419</span></div>
+<div class="abar-row"><span class="abar-lbl">C19</span><div class="abar-track"><div class="abar-fill" style="width:53.2%;background:#2e2e3a"></div><div class="abar-uni"  style="left:65.6%"></div></div><span class="abar-val">0.0405</span></div>
+
+      </div>
+    </div>
+  </div>
+
+  <h4 class="sub-title" style="margin-top:22px">
+    Top-3 Most Influential Chunks
+  </h4>
+  <div class="chunk-list">
+    <div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥇</span><span>Chunk 16</span><span class="chunk-w">weight = 0.0762</span></div><pre class="chunk-text">c&gt;&lt;00:02:12.000&gt;&lt;c&gt; little&lt;/c&gt;&lt;00:02:12.319&gt;&lt;c&gt; space.&lt;/c&gt;&lt;00:02:12.800&gt;&lt;c&gt; A&lt;/c&gt;&lt;00:02:13.040&gt;&lt;c&gt;
+flag&lt;/c&gt;&lt;00:02:13.599&gt;&lt;c&gt; comes&lt;/c&gt; just needs a little space. A flag comes in&lt;00:02:14.160&gt;&lt;c&gt;
+on&lt;/c&gt;&lt;00:02:14.480&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:14.720&gt;&lt;c&gt; return.&lt;/c&gt; in on the return. Elan&lt;00:02:17.760&gt;&lt;c&gt;
+Marion&lt;/c&gt;&lt;00:02:18.160&gt;&lt;c&gt; comes&lt;/c&gt;&lt;00:02:18.400&gt;&lt;c&gt; in&lt;/c&gt;&lt;00:02:18.560&gt;&lt;c&gt; motion.&lt;/c&gt;&lt;00:02:19.360&gt;&lt;c&gt;
+Beck&lt;/c&gt;&lt;00:02:19.760&gt;&lt;c&gt; has&lt;/c&gt; Elan Marion comes in motion. Beck has plenty&lt;00:02:20.319&gt;&lt;c&gt;
+of&lt;/c&gt;&lt;00:02:20.480&gt;&lt;c&gt; time&lt;/c&gt;&lt;00:02:20.720&gt;&lt;c&gt; again&lt;/c&gt;&lt;00:02:21.200&gt;&lt;c&gt; across&lt;/c&gt;&lt;00:02:21.440&gt;&lt;c&gt;
+the&lt;/c&gt;&lt;00:02:21.599&gt;&lt;c&gt; middle&lt;/c&gt; plenty of time again across the middle into&lt;00:02:22.239&gt;&lt;c&gt;
+traffic.&lt;/c&gt;&lt;00:02:22.640&gt;&lt;c&gt; It's&lt;/c&gt;&lt;00:02:22.800&gt;&lt;c&gt; broken&lt;/c&gt;&lt;00:02:23.120&gt;&lt;c&gt; up.&lt;/c&gt;&lt;00:02:23.920&gt;&lt;c&gt;
+Stepping&lt;/c&gt; into traffic. It's broken up. Stepping in&lt;00:02:24.480&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:02:24.6…</pre></div>
+<div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥈</span><span>Chunk 09</span><span class="chunk-w">weight = 0.0695</span></div><pre class="chunk-text"> one&lt;/c&gt;&lt;00:01:30.560&gt;&lt;c&gt; against&lt;/c&gt;&lt;00:01:30.960&gt;&lt;c&gt; Oregon.&lt;/c&gt;&lt;00:01:31.680&gt;&lt;c&gt; Dylan&lt;/c&gt; including one
+against Oregon. Dylan Joyce&lt;00:01:32.400&gt;&lt;c&gt; gets&lt;/c&gt;&lt;00:01:32.560&gt;&lt;c&gt; it&lt;/c&gt;&lt;00:01:32.720&gt;&lt;c&gt;
+away.&lt;/c&gt;&lt;00:01:33.040&gt;&lt;c&gt; Jonathan&lt;/c&gt;&lt;00:01:33.600&gt;&lt;c&gt; Brady&lt;/c&gt; Joyce gets it away. Jonathan Brady
+retreats&lt;00:01:34.880&gt;&lt;c&gt; and&lt;/c&gt;&lt;00:01:35.119&gt;&lt;c&gt; makes&lt;/c&gt;&lt;00:01:35.280&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:01:35.439&gt;&lt;c&gt;
+fair&lt;/c&gt;&lt;00:01:35.680&gt;&lt;c&gt; catch,&lt;/c&gt;&lt;00:01:35.920&gt;&lt;c&gt; but&lt;/c&gt; retreats and makes a fair catch, but
+inside&lt;00:01:36.640&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:01:36.960&gt;&lt;c&gt; 5&lt;/c&gt;&lt;00:01:37.119&gt;&lt;c&gt; yd&lt;/c&gt;&lt;00:01:37.439&gt;&lt;c&gt;
+line.&lt;/c&gt;&lt;00:01:38.720&gt;&lt;c&gt; Roman&lt;/c&gt;&lt;00:01:39.040&gt;&lt;c&gt; Hemi&lt;/c&gt;&lt;00:01:39.439&gt;&lt;c&gt; is&lt;/c&gt;&lt;00:01:39.600&gt;&lt;c&gt;
+the&lt;/c&gt; inside the 5 yd line. Roman Hemi is the back&lt;00:01:40.159&gt;&lt;c&gt; lined&lt;/c&gt;&lt;00:01:40.400&gt;&lt;c&gt;
+up&lt;/c&gt;&lt;00:01:40.640&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:01:40.880&gt;&lt;c&gt; Mendozan's&lt;/c&gt;&lt;00:01:41.520&gt;&lt;c&gt; right&lt;/c&gt;&lt;00:01:41…</pre></div>
+<div class="chunk-card" style="border-left-color:#4895ef"><div class="chunk-meta"><span class="chunk-medal">🥉</span><span>Chunk 17</span><span class="chunk-w">weight = 0.0681</span></div><pre class="chunk-text">00:02:20.720&gt;&lt;c&gt; again&lt;/c&gt;&lt;00:02:21.200&gt;&lt;c&gt; across&lt;/c&gt;&lt;00:02:21.440&gt;&lt;c&gt; the&lt;/c&gt;&lt;00:02:21.599&gt;&lt;c&gt; middle&lt;/c&gt;
+plenty of time again across the middle into&lt;00:02:22.239&gt;&lt;c&gt; traffic.&lt;/c&gt;&lt;00:02:22.640&gt;&lt;c&gt;
+It's&lt;/c&gt;&lt;00:02:22.800&gt;&lt;c&gt; broken&lt;/c&gt;&lt;00:02:23.120&gt;&lt;c&gt; up.&lt;/c&gt;&lt;00:02:23.920&gt;&lt;c&gt; Stepping&lt;/c&gt; into traffic. It's
+broken up. Stepping in&lt;00:02:24.480&gt;&lt;c&gt; to&lt;/c&gt;&lt;00:02:24.640&gt;&lt;c&gt; get&lt;/c&gt;&lt;00:02:24.720&gt;&lt;c&gt;
+a&lt;/c&gt;&lt;00:02:24.879&gt;&lt;c&gt; hand&lt;/c&gt;&lt;00:02:24.959&gt;&lt;c&gt; on&lt;/c&gt;&lt;00:02:25.120&gt;&lt;c&gt; it&lt;/c&gt;&lt;00:02:25.360&gt;&lt;c&gt;
+was&lt;/c&gt;&lt;00:02:25.599&gt;&lt;c&gt; Lewis&lt;/c&gt;&lt;00:02:26.160&gt;&lt;c&gt; Moore,&lt;/c&gt; in to get a hand on it was Lewis Moore,
+the&lt;00:02:27.599&gt;&lt;c&gt; sixth&lt;/c&gt;&lt;00:02:28.000&gt;&lt;c&gt; year&lt;/c&gt;&lt;00:02:28.239&gt;&lt;c&gt; senior&lt;/c&gt;&lt;00:02:29.200&gt;&lt;c&gt;
+and&lt;/c&gt;&lt;00:02:29.599&gt;&lt;c&gt; a&lt;/c&gt;&lt;00:02:29.760&gt;&lt;c&gt; three&lt;/c&gt;&lt;00:02:29.920&gt;&lt;c&gt; and&lt;/c&gt; the sixth year senior and a
+three and out&lt;00:02:30.319&gt;&lt;c&gt; for&lt;/c&gt;&lt;00:02:30.480&gt;&lt;c&gt; Miami.&lt;/c&gt; out for Miami. Not&lt;00…</pre></div>
+
+  </div>
+</section>
+
+
+<footer>
+  <p>
+    <b>Hierarchical RoBERTa</b> · Self-Attention Pooling over
+    sliding-window chunks (512 tok / 256 stride) ·
+    Classes: General / Teen / Mature
+  </p>
+  <p style="margin-top:6px">
+    Attention weights re-normalised after padding-chunk removal.
+    Dashed line in attention bars = uniform-baseline (1/N chunks).
+  </p>
+</footer>
+
+</div>
+</body>
+</html>

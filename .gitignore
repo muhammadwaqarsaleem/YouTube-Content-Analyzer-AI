@@ -1,11 +1,23 @@
+# ==========================================
+# Global Deep Learning Weights and Tensors
+# ==========================================
+*.pt
+**/checkpoints/
+**/runs/
+**/data/
+
+# ==========================================
 # EDA Outputs
+# ==========================================
 eda_outputs/
 *.png
 *.txt
 dataset_health_report.txt
 
+# ==========================================
 # Python
-__pycache__/
+# ==========================================
+**/__pycache__/
 *.py[cod]
 *$py.class
 *.so
@@ -26,13 +38,17 @@ wheels/
 .installed.cfg
 *.egg
 
+# ==========================================
 # Virtual Environment
+# ==========================================
 venv/
 ENV/
 env/
 .venv
 
+# ==========================================
 # IDE
+# ==========================================
 .vscode/
 .idea/
 *.swp
@@ -40,24 +56,38 @@ env/
 *~
 .DS_Store
 
+# ==========================================
 # Jupyter Notebooks
+# ==========================================
 .ipynb_checkpoints
 *.ipynb
 
-# Data files (large CSVs should not be in version control)
+# ==========================================
+# Data files 
+# ==========================================
 *.csv
 *.xlsx
 *.json
 *.parquet
 
-# Exceptions: Keep sample/small files if needed
-!sample_data.csv
-!example_data.csv
-
-# Testing
+# ==========================================
+# Testing & Logs
+# ==========================================
 .pytest_cache/
 .coverage
 htmlcov/
-
-# Logs
 *.log
+
+# ==========================================
+# 🚨 CRITICAL EXCEPTIONS 🚨
+# Allow specific results and config files to 
+# bypass the global *.png, *.txt, *.json blocks
+# ==========================================
+!sample_data.csv
+!example_data.csv
+!requirements.txt
+!**/results/reports/*.txt
+!**/results/reports/*.json
+!**/results/reports/*.html
+!**/results/plots/*.png
+!**/label_quality_report.txt
