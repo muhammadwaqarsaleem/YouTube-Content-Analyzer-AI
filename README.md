@@ -203,6 +203,36 @@ else:
     model = "allenai/longformer-base-4096"  # Handle long texts
 ```
 
+## 📊 Results & Evaluation
+
+The **Age Bracket Classification** module achieved the following baseline metrics on an unseen test set of 627 YouTube video transcripts:
+
+* **Test Accuracy:** 72.09%
+* **F1-Macro Score:** 0.6828
+* **F1-Weighted Score:** 0.7168
+
+### Data Science Insights
+The model demonstrates excellent ranking ability, achieving **ROC AUC scores of >0.90 for General/Mature** and **0.82 for Teen**. The Row-Normalised Confusion Matrix reveals strong recall for the `General` (80.2%) and `Mature` (76.4%) classes. 
+
+However, the model struggles with the `Teen` class (47.3% recall). Because "Teen" content often blurs the line between mild gaming slang and mature language, the model's internal probability distribution is often very close. When forced to make a strict decision using an `argmax` function, it tends to be overpowered by the larger `General` or `Mature` classes, highlighting the difficulty of multi-class thresholding in fuzzy content moderation.
+
+To provide full transparency into these decisions, the pipeline includes an **Explainable AI (XAI) Dashboard** (`results/reports/attention_report.html`) that extracts and visualizes the exact transcript chunks the Hierarchical Attention Network focused on during classification.
+
+---
+
+## 🚀 Roadmap & Future Work
+
+For open-source contributors or future iterations of this project, we have identified three high-impact areas for improvement:
+
+### 1. Probability Threshold Calibration (The Quick Fix)
+Currently, the model uses standard `argmax` thresholding (the highest probability wins). Because false negatives in content moderation carry high brand-safety risks, future iterations should implement **Operating Point Selection**. By manually lowering the classification threshold for the `Teen` and `Mature` categories (e.g., triggering a flag if the probability exceeds 30%, rather than waiting for it to be the highest score), we can drastically improve recall for the minority classes.
+
+### 2. Refining the Weak Supervision Pipeline (The Data Fix)
+The model was trained on a "Silver Dataset" generated via a fast, keyword-density weak supervision pipeline. The trade-off for this speed is inherent label noise (e.g., an educational video about "fighting" a disease being mistakenly labeled as "Teen/Mature"). Refining the heuristic keyword dictionaries and adding negative-constraint rules will produce a cleaner training dataset, directly improving the model's baseline accuracy.
+
+### 3. Implementing Focal Loss (The Mathematical Fix)
+To address the class imbalance (Teen is only 20% of the dataset), the model currently utilizes Class Weights in its Cross-Entropy loss function. A major mathematical upgrade would be integrating **Focal Loss**. This will force the neural network to down-weight "easy" examples (like obvious cartoons) during backpropagation and hyper-focus its learning capacity on the hard-to-classify, gray-area videos.
+
 ### Publication-Ready
 All outputs are publication-quality:
 - Visualizations: 300 DPI, ready for papers
