@@ -116,14 +116,19 @@ class CategoryPredictionService:
         Predict video category from thumbnail and metadata
         
         Args:
-            thumbnail_path: Path to thumbnail image
+            thumbnail_path: Path to thumbnail image (can be None)
             metadata: Dictionary with video metadata
             
         Returns:
             Dictionary with category predictions
         """
+        # Handle missing thumbnail - use fallback prediction
+        if thumbnail_path is None or not Path(thumbnail_path).exists():
+            print("No thumbnail provided or file doesn't exist - using fallback prediction")
+            return self._fallback_prediction(metadata)
+        
         if self.model is None or self.feature_extractor is None:
-            return self._fallback_prediction(thumbnail_path, metadata)
+            return self._fallback_prediction(metadata)
         
         print("Predicting category...")
         
@@ -162,7 +167,6 @@ class CategoryPredictionService:
             category_probs.sort(key=lambda x: x['probability'], reverse=True)
             
             # DEBUG: Show original model prediction BEFORE overrides
-            print(f"\n📊 ORIGINAL MODEL PREDICTION:")
             print(f"   Top 3 categories from ML model:")
             for i, cat in enumerate(category_probs[:3], 1):
                 print(f"   {i}. {cat['category']} ({cat['probability']*100:.2f}%)")
@@ -240,9 +244,9 @@ class CategoryPredictionService:
             
         except Exception as e:
             print(f"Error making prediction: {e}")
-            return self._fallback_prediction(thumbnail_path, metadata)
+            return self._fallback_prediction(metadata)
     
-    def _fallback_prediction(self, thumbnail_path, metadata):
+    def _fallback_prediction(self, metadata):
         """
         Fallback prediction when model is not available
         
@@ -257,7 +261,7 @@ class CategoryPredictionService:
         
         combined_text = f"{title} {description} {tags}"
         
-        # Define category keywords
+        # Define category keywords (using generic names for internal matching)
         category_keywords = {
             'Entertainment': ['entertainment', 'fun', 'show', 'music', 'video', 'movie'],
             'Comedy': ['comedy', 'funny', 'humor', 'joke', 'laugh', 'lol'],
@@ -269,6 +273,21 @@ class CategoryPredictionService:
             'Automobile': ['car', 'auto', 'vehicle', 'drive', 'automotive', 'bike'],
             'Informative': ['informative', 'educational', 'tutorial', 'learn', 'guide'],
             'VideoGames': ['game', 'gaming', 'videogame', 'esports', 'playthrough'],
+        }
+        
+        # Map generic category names to YouTube API standard categories
+        CATEGORY_MAPPING = {
+            'Informative': 'Education',
+            'VideoGames': 'Gaming',
+            'Tech': 'Science & Technology',
+            'Blog': 'People & Blogs',
+            'Automobile': 'Autos & Vehicles',
+            'News': 'News & Politics',
+            'Science': 'Science & Technology',
+            # Keep these as-is (already match YouTube API)
+            'Entertainment': 'Entertainment',
+            'Comedy': 'Comedy',
+            'Food': 'Entertainment',  # Food falls under Entertainment in YouTube API
         }
         
         # Count matches
@@ -287,7 +306,7 @@ class CategoryPredictionService:
         if not top_categories:
             top_categories = [('Entertainment', 1)]  # Default
         
-        # Normalize scores to probabilities
+        # Normalize scores to probabilities and apply category mapping
         total_score = sum(score for _, score in top_categories)
         if total_score == 0:
             total_score = 1
@@ -295,8 +314,10 @@ class CategoryPredictionService:
         category_probs = []
         for category, score in top_categories[:10]:
             prob = score / total_score
+            # Map to YouTube API category name
+            mapped_category = CATEGORY_MAPPING.get(category, category)
             category_probs.append({
-                'category': category,
+                'category': mapped_category,
                 'probability': prob
             })
         

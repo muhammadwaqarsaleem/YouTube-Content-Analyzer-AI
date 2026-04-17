@@ -145,6 +145,11 @@ class AnalysisAggregator:
         if context_modifier != 0:
             print(f"  📊 Severity: {raw_severity} → {final_severity} (modifier: {context_modifier:+d})")
         
+        # CRITICAL FIX: If not violent, severity MUST be NONE regardless of raw score
+        if not is_violent:
+            final_severity = 'NONE'
+            print(f"  ✓ Not violent (is_violent=False) → Setting severity to NONE")
+        
         # ─── 4. BUILD SUMMARIES ───
         violence_summary = {
             'is_violent': is_violent,
