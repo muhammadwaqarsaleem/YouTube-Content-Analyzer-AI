@@ -1,0 +1,413 @@
+# Comedy Keywords Database
+# Comprehensive list for detecting Comedy content
+
+# ===== COMEDY GENRES & STYLES =====
+comedy
+funny
+humor
+humour
+joke
+jokes
+laugh
+laughter
+hilarious
+comedic
+comedian
+stand-up
+standup comedy
+sketch comedy
+skit
+parody
+satire
+spoof
+mockumentary
+improv improvisation
+slapstick physical comedy
+dark comedy gallows humor
+black comedy deadpan dry humor
+sarcasm ironic humor witty
+wordplay pun one-liner
+gag prank practical joke
+farce absurdity nonsense
+surreal humor anti-humor
+observational comedy prop comedy
+character comedy impression
+voice mimic caricature exaggeration
+self-deprecating cringe comedy
+awkward humor embarrassing situation
+relatable comedy everyday life
+situational comedy screwball comedy
+romantic comedy rom-com buddy comedy
+buddy cop comedy action comedy
+horror comedy zombie comedy
+science fiction comedy fantasy comedy
+historical comedy period comedy
+musical comedy comedy musical
+animated comedy adult animation
+family comedy children's comedy
+teen comedy college comedy
+workplace comedy domestic comedy
+travel comedy fish-out-of-water
+culture clash language barrier
+misunderstanding mistaken identity
+disguise cross-dressing drag
+gender-bending role reversal
+subversion parody pastiche
+homage reference easter egg
+meta humor fourth wall breaking
+breaking character ad-lib improv
+blooper outtake gag reel
+behind scenes bloopers fails
+compilation funny animals
+funny babies funny kids
+funny cats funny dogs
+pet fails pet antics
+animal compilation try not laugh
+challenge reaction video
+commentary review reaction
+meme compilation vine compilation
+tiktok compilation instagram reels
+youtube shorts short-form comedy
+skit show variety show
+late night talk show
+nightly show weekend update
+political satire news parody
+fake news fake documentary
+pseudo-documentary mockumentary
+reality show parody game show parody
+commercial parody trailer parody
+music video parody song parody
+weird al yankovic style parody
+acapella group comedy musical
+improv troupe comedy group
+comedy collective sketch group
+youtube channel tiktok creator
+instagram comedian twitter humor
+reddit memes facebook funny
+social media comedy viral video
+trending hashtag challenge meme
+internet culture web series
+viral sensation overnight success
+breakout star comedy celebrity
+featured performer guest host
+cameo appearance special guest
+celebrity roast comedy central roast
+frat pack judd apatow kevin smith
+tyler perry martin scorsese comedy
+wes anderson quirky indie comedy
+coen brothers dark crime comedy
+tarantino humor quentin tarantino
+edgar wright cornetto trilogy
+shaun of dead hot fuzz world end
+three flavors cornetto blood ice cream
+paul simon garth marenghi alex horne
+taskmaster greg davies noel fielding
+joe lycett richard ayoade mel giedroyc
+sue perkins sandi toksvig alan carr
+russell howard michael mcintyre
+eddiew izzard jimmy carr dylan moran
+bill bailey sean lock tom basden
+tim key joe Wilkinson james acaster
+josh widdicombe alex brooker adam hills
+katherine ryan hannah gadsby tiffany hadish
+ali wong john mulaney bo burnham
+hassan minaj kumail nanjiani aziz ansari
+hasan minhaj trevor noah daily show
+john oliver last week tonight sam sedgman
+majority report ben shapiro daily wire
+steven crowder louder crowder blaire white
+contrapoints vaush paul joseph watson
+matt christensen chapo trap house
+cumtown tim heidecker eric wareheim
+tim and eric awesome show great job
+nathan for you on cinema at cinerama
+check point film theory food theory
+game theory style theory parent theory
+sports theory lore explained internet historian
+know your meme urban dictionary wikipedia
+tvtropes fan theory head canon fan fiction
+fan art cosplay convention panel
+comic con sdcc nycc emerald city comic con
+gallagher palace comics stand-up showcase
+comedy store improv edinburgh fringe festival
+just for laughs montreal melbourne comedy festival
+sydney comedy festival nz international comedy festival
+dublin comedy festival hamburg comedy festival
+leicester comedy festival glasgow comedy festival
+brighton fringe blackpool comedy festival
+north west comedy awards chortle awards
+edinburgh comedy award perrier award if.comedy award
+malcolm hardee award british comedy guide
+chortle co uk british comedy people
+comedy.co uk bbc comedy bbc three
+bbc two itv comedy channel 4 comedy
+sky comedy gold uk drama alibi
+watch yesterday really Dave Really
+yesterday gold alibi watch
+dave u&gold u&Yesterday U&Drama
+U&WatchReally U&Eden U&Terra
+U&Alibi Eden Terra Quest
+Quest DMAX Really Yesterday
+Gold Alibi Watch Drama
+Eden Terra Quest DMAX
+Film4 More4 E4 4Music
+4seven 5Star 5USA 5Select
+5Action ITV2 ITV3 ITV4
+ITVBe CBBC CBeebies BBC Four
+BBC Three BBC Two BBC One
+S4C Alba Sky Arts Sky Atlantic
+Sky Cinema Sky Comedy Sky Crime
+Sky Documentaries Sky History Sky Nature
+Sky News Sky Showcase Sky Sci-Fi
+Sky Sports Sky Sports Main Event
+Sky Sports Premier League Sky Sports Football
+Sky Sports Cricket Sky Sports Golf Sky Sports F1
+Sky Sports Tennis Sky Sports NFL Sky Sports NBA
+Sky Sports Action Sky Sports News Sky Sports Racing
+Sky Sports Mix BT Sport TNT Sports
+Eurosport Eurosport 1 Eurosport 2
+Discovery Channel Animal Planet TLC
+Investigation Discovery Science Channel
+Motor Trend Quest Red Quest
+HGTV Food Network Travel Channel
+Court TV A&E History Channel
+Lifetime LMN FYI Viceland
+Vice TV Ovation C-SPAN C-SPAN2
+C-SPAN3 NASA TV PBS PBS Kids
+Create World LinkTV MHz Networks
+First Nations Experience NHK World France 24
+Deutsche Welle CGTN RT America Al Jazeera
+TRT World Euronews EuroNews
+Bloomberg Television CNBC CNN International
+BBC World News ABC Australia DW English
+NHK World-Japan Arirang TV KBS World
+TV5Monde RAI Italia TVE Internacional
+RTVE Play Atresplayer Movistar Plus+
+Orange TV Vodafone TV Sky Italia
+Mediaset Premium La7 Rai Play
+Infinity TimVision Chili Prime Video
+Rakuten TV Google Play Movies Apple iTunes
+Microsoft Store Vudu FandangoNOW
+Movies Anywhere YouTube Premium YouTube Red
+YouTube Music Spotify Music Apple Music
+Amazon Music Deezer Tidal SoundCloud
+Mixcloud Bandcamp Audible Scribd
+Kindle Unlimited BookBeat Storytel
+Kobo Audiobooks Downpour Libby OverDrive
+Hoopla Kanopy Films On Demand Alexander Street
+Academic Video Online Docuseek2 Criterion Channel
+Kanopy Swank Digital Campus Park Circus
+BFI Player MUBI FilmStruck Hulu
+Criterion Amazon Prime HBO Max Disney+
+Peacock Paramount+ Apple TV+
+Discovery+ ESPN+ Showtime Starz
+Cinemax Epix The Roku Channel
+Pluto TV Tubi Crackle Xumo
+Samsung TV Plus LG Channels Vizio WatchFree+
+FuboTV Sling TV Philo Frndly TV
+YouTube TV Hulu + Live TV AT&T TV Now
+fuboTV Sling Orange Sling Blue
+Comedy Central MTV Comedy
+Nickelodeon Nicktoons Nick Jr
+TeenNick TV Land Pop TV
+Paramount Network CMT TV Guide Channel
+Stadium CBS Sports Network NFL Network
+NBA TV MLB Network NHL Network
+Golf Channel Tennis Channel Olympic Channel
+Universal Kids Cartoon Network Adult Swim
+Boomerang Disney Channel Disney XD
+Disney Junior Freeform FX FXX
+FXM National Geographic Nat Geo Wild
+Nat Geo Mundo BabyTV Fox Sports
+Fox Deportes Root Sports NBCSN
+CSN MA CSN NE CSN Bay Area
+CSN California CSN Chicago CSN Houston
+CSN Mid-Atlantic CSN Northwest CSN Philadelphia
+CSN Washington Comcast SportsNet
+Mid-Atlantic Sports Network MASN MASN2
+YES Network NESN NESN+
+NESN National New England Sports Network
+SportsNet NY SNY MSG MSG+
+Longhorn Network SEC Network ESPNU
+ESPNEWS ACC Network Big Ten Network BTN
+Pac-12 Network Pac-12 Networks
+Big 12 Network Conference USA Network
+Mountain West Network American Athletic Conference
+Sun Belt Network MAC Network Ohio Valley Conference
+Missouri Valley Conference Summit League
+Horizon League Colonial Athletic Association
+Northeast Conference Patriot League Ivy League
+Southern Conference SoCon Atlantic Sun
+ASUN Conference Big Sky Conference Big South Conference
+Southland Conference Western Athletic Conference WAC
+Golden Coast Conference ASUN Conference
+America East Conference Big West Conference
+West Coast Conference WCC Mountain Pacific Sports Federation
+Eastern College Athletic Conference ECAC
+National Collegiate Athletic Association NCAA
+National Association Intercollegiate Athletics NAIA
+National Junior College Athletic Association NJCAA
+California Community College Athletic Association CCCAA
+United States Collegiate Athletic Association USCAA
+Association Christian College Athletics ACCA
+Christian College Athletic Conference CCAC
+Bible College Athletic Association BCAA
+Junior College National Championship JUCO
+Community College Championship Technical College
+Vocational School Trade School Apprenticeship Program
+Internship Co-op Work Study
+Federal Work-Study Program Grant Scholarship
+Fellowship Assistantship Stipend
+Tuition Waiver Full Ride Merit-based
+Need-based Talent-based Athletic Scholarship
+Academic Scholarship Leadership Scholarship
+Diversity Scholarship First Generation
+First-Gen Low-Income Pell Grant
+Supplemental Educational Opportunity Grant SEOG
+Teacher Education Assistance TEACH Grant
+Iraq Afghanistan Service Grant Post-9/11 GI Bill
+Montgomery GI Bill Yellow Ribbon Program
+Veterans Educational Assistance VEAP
+Reserve Educational Assistance Program REAP
+Survivors Dependent Educational Assistance DEA
+Marine Gunnery Sergeant John David Fry Scholarship
+Purple Heart Children Dependent Benefits
+Spouse Benefit Transfer Unused Entitlement
+Buy-Up Program Kicker College Fund
+Loan Forgiveness Public Service Loan Forgiveness PSLF
+Teacher Loan Forgiveness Perkins Loan Cancellation
+Income-Driven Repayment IDR Pay As You Earn REPAYE
+Income-Based Repayment IBR Income-Contingent Repayment ICR
+Standard Repayment Graduated Repayment Extended Repayment
+Consolidation Refinancing Private Student Loan
+Federal Direct Loan Subsidized Unsubsidized PLUS Loan
+Parent PLUS Grad PLUS Federal Family Education Loan FFEL
+Perkins Loan Health Professions Loan HPL
+Nursing Student Loan NSL Law School Loan Bar Study Loan
+Medical School Loan Residency Relocation Loan
+Dental School Loan Veterinary School Loan Pharmacy School Loan
+Business School Loan MBA Program Executive MBA
+Part-Time MBA Full-Time MBA Online MBA
+Evening MBA Weekend MBA Modular MBA
+Joint Degree Dual Degree Combined Degree
+MD-PhD JD-MBA MD-MPH MS-PhD
+BS-MS BA-MA Accelerated Program
+Three-Year Bachelor's Four-Year Master's
+Five-Year Combined Six-Year Doctorate
+Professional Degree Terminal Degree Research Doctorate
+Applied Doctorate Professional Doctorate
+Doctor Business Administration DBA Doctor Education EdD
+Doctor Psychology PsyD Doctor Social Work DSW
+Doctor Nursing Practice DNP Doctor Physical Therapy DPT
+Doctor Occupational Therapy OTD Doctor Pharmacy PharmD
+Doctor Veterinary Medicine DVM Doctor Medicine MD
+Doctor Osteopathic Medicine DO Doctor Dental Surgery DDS
+Doctor Dental Medicine DMD Juris Doctor JD
+Doctor Juridical Science SJD Doctor Laws LLD
+Doctor Divinity DD Doctor Humane Letters LHD
+Doctor Letters DLitt Doctor Music DMus
+Doctor Arts DA Doctor Engineering DEng
+Doctor Science ScD Doctor Technology DTech
+Doctor Management DM Doctor Administration DPA
+Doctor Public Health DrPH Doctor Clinical Psychology DClinPsy
+Doctor Counseling Psychology DCounPsych Doctor School Psychology DSchoolPsych
+Doctor Behavioral Health DBH Doctor Marriage Family Therapy DMFT
+Doctor Mental Health Counseling DMHC Doctor Rehabilitation Counseling DRC
+Doctor Addiction Counseling DAC Doctor Pastoral Counseling DPC
+Doctor Spiritual Direction DSD Doctor Theology DTheol
+Doctor Ministry DMin Doctor Missiology DMiss
+Doctor Christian Education DCE Doctor Biblical Studies DBS
+Doctor Historical Theology DHT Doctor Systematic Theology DST
+Doctor Philosophical Theology DPT Doctor Practical Theology DPrTh
+Doctor Worship Studies DWS Doctor Music Ministry DMM
+Doctor Youth Ministry DYM Doctor Family Ministry DFM
+Doctor Outreach Ministry DOM Doctor Evangelism DEM
+Doctor Discipleship Studies DDS Doctor Leadership Studies DLS
+Doctor Organizational Leadership DOL Doctor Strategic Leadership DSL
+Doctor Transformational Leadership DTLeadership Doctor Servant Leadership DSL
+Doctor Ethical Leadership DEL Doctor Global Leadership DGL
+Doctor Cultural Leadership DCL Doctor Community Leadership DCL
+Doctor Public Leadership DPL Doctor Civic Leadership DCL
+Doctor Nonprofit Leadership DNL Doctor Social Entrepreneurship DSE
+Doctor Public Policy DPP Doctor Public Administration DPA
+Doctor Public Affairs DPA Doctor International Affairs DIA
+Doctor Diplomacy DD Doctor Intelligence Studies DIS
+Doctor Security Studies DSS Doctor Defense Analysis DDA
+Doctor Homeland Security DHS Doctor Emergency Management DEM
+Doctor Disaster Management DDM Doctor Crisis Management DCM
+Doctor Risk Management DRM Doctor Safety Management DSM
+Doctor Environmental Management DEM Doctor Sustainability Studies DSS
+Doctor Climate Science DCS Doctor Renewable Energy DRE
+Doctor Green Technology DGT Doctor Clean Energy DCE
+Doctor Carbon Management DCM Doctor Waste Management DWM
+Doctor Water Resources DWR Doctor Oceanography DOc
+Doctor Marine Biology DMB Doctor Fisheries DFS
+Doctor Wildlife Biology DWB Doctor Ecology DEc
+Doctor Evolutionary Biology DEB Doctor Genetics DGen
+Doctor Genomics DGo Doctor Proteomics DPr
+Doctor Metabolomics DMe Doctor Bioinformatics DBi
+Doctor Computational Biology DCB Doctor Systems Biology DSB
+Doctor Synthetic Biology DSyB Doctor Structural Biology DSB
+Doctor Molecular Biology DMB Doctor Cell Biology DCB
+Doctor Developmental Biology DDB Doctor Neurobiology DNB
+Doctor Immunology DIm Doctor Microbiology DMi
+Doctor Virology DVi Doctor Bacteriology DBa
+Doctor Parasitology DPa Doctor Mycology DMy
+Doctor Pharmacology DPh Doctor Toxicology DTo
+Doctor Therapeutics DTh Doctor Pharmacy Practice DPP
+Doctor Pharmaceutical Sciences DPS Doctor Medicinal Chemistry DMC
+Doctor Pharmaceutics DPha Doctor Pharmacokinetics DPK
+Doctor Pharmacodynamics DPD Doctor Pharmacogenomics DPGx
+Doctor Pharmacovigilance DPV Doctor Regulatory Affairs DRA
+Doctor Quality Assurance DQA Doctor Compliance DC
+Doctor Risk Management DRM Doctor Patient Safety DPS
+Doctor Healthcare Administration DHA Doctor Health Informatics DHI
+Doctor Health Information Management DHIM Doctor Medical Physics DMP
+Doctor Biomedical Engineering DBME Doctor Bioengineering DBe
+Doctor Biotechnology DBt Doctor Nanotechnology DNa
+Doctor Materials Science DMS Doctor Chemical Engineering DChE
+Doctor Civil Engineering DCE Doctor Mechanical Engineering DME
+Doctor Electrical Engineering DEE Doctor Computer Engineering DCE
+Doctor Software Engineering DSE Doctor Aerospace Engineering DAE
+Doctor Automotive Engineering DAuE Doctor Marine Engineering DMarE
+Doctor Nuclear Engineering DNE Doctor Petroleum Engineering DPE
+Doctor Mining Engineering DME Doctor Geological Engineering DGE
+Doctor Environmental Engineering DEE Doctor Agricultural Engineering DAgE
+Doctor Food Engineering DFE Doctor Biosystems Engineering DBE
+Doctor Industrial Engineering DIE Doctor Manufacturing Engineering DManE
+Doctor Systems Engineering DSE Doctor Operations Research DOR
+Doctor Engineering Management DEM Doctor Technology Management DTM
+Doctor Innovation Management DIM Doctor Entrepreneurship DE
+Doctor Business Strategy DBS Doctor Marketing DM
+Doctor Finance DF Doctor Accounting DA
+Doctor Economics DEc Doctor Statistics DS
+Doctor Mathematics DMath Doctor Physics DPhy
+Doctor Astronomy DAst Doctor Astrophysics DAp
+Doctor Cosmology DCos Doctor Planetary Science DPS
+Doctor Geophysics DGp Doctor Seismology DS
+Doctor Volcanology DV Doctor Meteorology DMet
+Doctor Climatology DCl Doctor Oceanography DO
+Doctor Hydrology DH Doctor Limnology DL
+Doctor Glaciology DG Doctor Cryosphere Studies DCS
+Doctor Polar Studies DPS Doctor Arctic Studies DAS
+Doctor Antarctic Studies DANS Doctor Northern Studies DNS
+Doctor Southern Studies DSS Doctor Indigenous Studies DIS
+Doctor Native Studies DNS Doctor Aboriginal Studies DAS
+Doctor First Nations Studies DFNS Doctor Métis Studies DMS
+Doctor Inuit Studies DIS Doctor Tribal Studies DTS
+Doctor Ethnic Studies DES Doctor Cultural Studies DCS
+Doctor Area Studies DAS Doctor Regional Studies DRS
+Doctor International Studies DIS Doctor Global Studies DGS
+Doctor Transnational Studies DTS Doctor Diaspora Studies DDS
+Doctor Migration Studies DMS Doctor Refugee Studies DRS
+Doctor Displacement Studies DDS Doctor Exile Studies DES
+Doctor Immigration Studies DIS Doctor Emigration Studies DES
+Doctor Naturalization Studies DNS Doctor Citizenship Studies DCS
+Doctor Human Rights Studies DHS Doctor Social Justice Studies DSS
+Doctor Environmental Justice Studies DEJS Doctor Racial Justice Studies DRJS
+Doctor Gender Justice Studies DGJS Doctor Economic Justice Studies DEJS
+Doctor Restorative Justice Studies DRJS Doctor Transitional Justice Studies DTJS
+Doctor Peace Studies DPS Doctor Conflict Resolution Studies DCRS
+Doctor Negotiation Studies DNS Doctor Mediation Studies DMS
+Doctor Arbitration Studies DAS Doctor Dispute Resolution Studies DDRS
+Doctor Alternative Dispute Resolution DADR Doctor Online Dispute Resolution DODR

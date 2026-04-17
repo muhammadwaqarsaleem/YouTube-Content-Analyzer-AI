@@ -1,0 +1,193 @@
+# Music Keywords Database
+# Comprehensive list for detecting Music content
+
+# ===== MUSIC VIDEO FORMATS =====
+official video
+official music video
+lyric video
+audio track
+visualizer audio
+album album full
+full album stream
+single release
+ep extended play
+lp long play
+remix official remix
+feat featuring ft
+collaboration duet mashup
+cover version acoustic cover
+live performance concert footage
+music video mv teaser trailer
+directed by prod by
+executive producer record producer
+vocal producer mixing engineer
+mastering engineer recording engineer
+sound designer audio engineer
+studio session studio recording
+demo version demo tape rough mix
+final mix radio edit clean version
+explicit version instrumental a cappella
+extended version club mix dance remix
+house remix techno remix dubstep remix
+trap remix hip hop remix r&b remix
+pop remix rock remix country remix
+latin remix reggaeton remix k-pop remix
+j-pop remix ballad version orchestral version
+symphonic version piano version guitar version
+unplugged mtv unplugged stripped down
+acoustic session live session studio version
+original version original mix original cut
+alternative version alternate take different version
+reimagined reworked revised updated
+remastered 4k remaster hd remaster
+director's cut special edition deluxe edition
+collector's edition limited edition vinyl release
+cd release cassette release digital download
+streaming exclusive platform exclusive timed exclusive
+pre-save pre-order pre-add coming soon
+release date announcement album announcement
+tour announcement single artwork album artwork
+behind scenes making documentary film
+interview press release media kit
+promotional single promotional video promo clip
+radio single commercial single airplay
+chart eligibility billboard submission
+grammy consideration award submission
+music competition talent show audition
+open mic karaoke night live gig
+club performance bar venue festival stage
+main stage second stage acoustic stage
+vip area meet greet fan event
+album listening party release party launch event
+signing session autograph signing photo op
+fan convention music convention industry event
+trade show music conference networking event
+showcase festival sxsw south southwest
+coachella lollapalooza bonnaroo outside lands
+glastonbury reading leeds downloads festival
+rock am ring rock im park hurricane southside
+tomorrowland ultra electric daisy carnival edc
+creamfields defqon1 q-dance tomorrowland winter
+sunburn festival vortex tomorrowland brasil
+ultra korea ultra japan ultra singapore
+ultra miami ultra europe ultra australia
+storm festival clockenflap wonderfruit spirit
+electric forest lightning bottleneck shambhala
+noisily boomtown escape into the future
+yonderville lucidity transformation okeechobee
+rainbow serpent migration cosmic meadow psytrance
+goa trance full-on progressive psytech darkpsy
+hi-tech forest morning twilight downtempo chillout
+ambient drone new age meditation yoga
+spa relaxation sleep study focus concentration
+productivity creativity inspiration motivation workout
+gym running cycling swimming hiking dancing
+party clubbing rave nightclub discotheque lounge
+bar pub tavern club beach club rooftop
+pool party yacht party warehouse party underground
+illegal rave free party sound system culture
+dub reggae ska rocksteady dancehall soca calypso
+zouk kompa merengue bachata salsa cumbia vallenato
+tango flamenco rumba fado choro samba bossa nova
+mpb tropicalia axé frevo forró baião xote maracatu
+afoxé ijexá coco embolada repente cordel literatura
+pagode samba de roda jongo carimbó lambada tecnobrega
+funk carioca baile funk proibidão mandelão ousadia funk
+passinho malokas funk melody soul funk black music rap nacional
+trap brasileiro drill brasileiro grime uk drill afroswing road rap
+uk hip hop french rap german rap deutschrap cloud rap emo rap
+mumble rap conscious rap political rap gangsta rap hardcore hip hop
+old school hip hop golden age hip hop new school hip hop alternative hip hop
+experimental hip hop abstract hip hop jazz rap boom bap turntablism dj culture
+scratching beatmatching beat juggling sampling breakbeat drum break amen break
+funky breaks big beat trip hop downtempo chillwave synthwave retrowave outrun
+darksynth cyberpunk industrial ebm noise power electronics harsh noise wall
+drone doom sludge stoner metal blackened deathcore metalcore deathcore symphonic metal
+power metal progressive metal avant-garde metal neoclassical metal folk metal viking metal
+pagan metal celtic metal medieval metal gothic metal doom metal funeral doom drone doom
+black metal depressive suicidal black metal dsbm atmospheric black metal symphonic black metal
+melodic black metal technical death metal brutal death metal slam death metal old school death metal
+death-doom gothic-doom funeral doom sludge metal crust punk d-beat powerviolence grindcore
+goregrind pornogrind deathgrind noisecore mathcore math rock post-rock post-hardcore emocore
+screamo skramz midwest emo american football midwest revival emo revival pop punk melodic hardcore
+easycore skate punk surf punk garage punk psychobilly rockabilly roots rock blues rock southern rock
+country rock outlaw country red dirt texas country neotraditional country bro-country country pop
+bluegrass gospel southern gospel contemporary christian music ccm worship praise christian rock
+christian metal christian hip hop christian r&b christian electronic dance music cedm christian alternative
+christian indie christian punk christian hardcore christian screamo christian post-hardcore christian math rock
+christian shoegaze christian dream pop christian slowcore christian sadcore christian post-rock christian ambient
+christian drone christian neo-classical christian world christian celtic christian gregorian chant christian hymn
+christian spiritual christian mass christian requiem christian oratorio christian cantata christian motet christian anthem
+christian chorale christian psalm christian hymnal christian songbook christian chord chart christian lead sheet
+christian fake book christian real book christian transcription christian arrangement christian adaptation christian interpretation
+christian variation christian theme christian motive christian motif christian phrase christian melody christian harmony
+christian counterpoint christian polyphony christian homophony christian monophony christian heterophony christian isorhythm
+christian ostinato christian pedal point christian drone note christian bagpipe christian hurdy-gurdy christian shruti box
+christian tanpura christian didgeridoo christian mouth harp christian jaw harp christian guiro christian cabasa christian shekere
+christian agogo christian cowbell christian wood block christian temple block christian log drum christian slit drum christian talking drum
+christian djembe christian conga christian bongo christian timbale christian darbouka christian doumbek christian goblet drum
+christian frame drum christian bodhrán christian tambourine christian riq christian daf christian bendir christian tar christian dayereh
+christian dhol christian nagara christian naqqara christian kettledrum christian tympani christian bass drum christian snare drum
+christian tom-tom christian floor tom christian tenor drum christian side drum christian field drum christian march drum christian military drum
+christian parade drum christian pipe band christian drum corps christian bugle corps christian horn line christian brass section christian wind section
+christian percussion section christian rhythm section christian string section christian woodwind christian brasswind christian percussion ensemble
+christian drumline christian battery christian hornline christian color guard christian dance team christian cheer squad christian marching band
+christian pep band christian concert band christian symphonic band christian wind ensemble christian wind symphony christian wind orchestra
+christian chamber ensemble christian chamber orchestra christian symphony orchestra christian philharmonic orchestra christian string orchestra
+christian chamber choir christian symphonic choir christian glee club christian chorus christian chorale christian vocal ensemble christian vocal group
+christian a cappella christian barbershop christian doo-wop christian close harmony christian four-part harmony christian mixed choir christian men's choir
+christian women's choir christian children's choir christian youth choir christian gospel choir christian show choir christian select choir christian handbell choir
+christian bell choir christian carillon christian chime christian tubular bells christian orchestral bells christian glockenspiel christian xylophone christian vibraphone
+christian marimba christian celesta christian gong christian tam-tam christian crotales christian antique cymbals christian finger cymbals christian castanets christian claves
+christian triangle christian sleigh bells christian wind chimes christian thunder sheet christian flexatone christian musical saw christian theremin christian ondes martenot
+christian synthesizer christian keyboard christian piano christian fortepiano christian harpsichord christian clavichord christian virginal christian spinet christian clavicytherium
+christian upright piano christian grand piano christian baby grand christian concert grand christian electric piano christian digital piano christian stage piano christian silent piano
+christian player piano christian reproducing piano christian disklavier christian pianola christian midi piano christian computer piano christian software piano christian virtual piano
+christian vst instrument christian plugin christian sample library christian soundfont christian preset christian patch christian bank christian program christian combination christian performance
+christian multi christian zone christian layer christian split christian velocity christian aftertouch christian modulation christian expression christian pedal christian controller christian midi controller
+christian usb midi christian bluetooth midi christian wifi midi christian ethernet midi christian wireless midi christian mobile midi christian tablet midi christian smartphone christian app christian ios app
+christian android app christian mac app christian windows app christian linux app christian daw christian digital audio workstation christian recording software christian production software christian composition software
+christian notation software christian scoring software christian engraving software christian typesetting software christian publishing software christian distribution software christian marketing software christian promotion software
+christian social media christian streaming platform christian video platform christian audio platform christian podcast platform christian blog platform christian website platform christian ecommerce platform christian payment platform
+christian ticketing platform christian merchandising platform christian crowdfunding platform christian donation platform christian subscription platform christian membership platform christian loyalty platform christian rewards platform
+christian analytics platform christian data platform christian insights platform christian intelligence platform christian reporting platform christian dashboard platform christian visualization platform christian monitoring platform
+christian tracking platform christian measurement platform christian optimization platform christian testing platform christian experimentation platform christian personalization platform christian recommendation platform christian discovery platform
+christian curation platform christian aggregation platform christian syndication platform christian distribution platform christian delivery platform christian hosting platform christian storage platform christian backup platform
+christian security platform christian authentication platform christian authorization platform christian encryption platform christian privacy platform christian compliance platform christian governance platform christian risk platform
+christian quality platform christian reliability platform christian scalability platform christian performance platform christian availability platform christian resilience platform christian continuity platform christian disaster recovery
+christian business continuity christian operational resilience christian crisis management christian emergency management christian incident management christian problem management christian change management christian configuration management
+christian asset management christian resource management christian capacity management christian demand management christian supply management christian inventory management christian procurement management christian vendor management
+christian contract management christian license management christian rights management christian royalty management christian revenue management christian financial management christian accounting management christian tax management
+christian audit management christian legal management christian regulatory management christian policy management christian procedure management christian process management christian workflow management christian project management
+christian program management christian portfolio management christian strategy management christian governance management christian risk management christian compliance management christian ethics management christian sustainability management
+christian environmental management christian social management christian corporate social responsibility csr christian environmental social governance esg christian impact management christian outcome management christian value management
+christian benefit management christian stakeholder management christian shareholder management christian investor management christian partner management christian customer management christian client management christian user management
+christian member management christian subscriber management christian follower management christian fan management christian supporter management christian donor management christian volunteer management christian employee management
+christian contractor management christian consultant management christian advisor management christian mentor management christian coach management christian teacher management christian instructor management christian trainer management
+christian facilitator management christian moderator management christian mediator management christian negotiator management christian arbitrator management christian conciliator management christian ombudsman management christian advocate management
+christian representative management christian agent management christian broker management christian dealer management christian distributor management christian retailer management christian wholesaler management christian manufacturer management
+christian supplier management christian provider management christian vendor management christian partner management christian alliance management christian consortium management christian cooperative management christian collaborative management
+christian network management christian community management christian ecosystem management christian platform management christian marketplace management christian exchange management christian hub management christian center management
+christian office management christian facility management christian site management christian location management christian venue management christian space management christian workplace management christian workspace management
+christian coworking management christian shared workspace management christian flexible workspace management christian serviced office management christian virtual office management christian remote work management christian distributed work management
+christian telecommuting management christian telework management christian flexwork management christian agile work management christian hybrid work management christian blended work management christian integrated work management
+christian unified work management christian consolidated work management christian centralized work management christian decentralized work management christian federated work management christian collaborative work management christian cooperative work
+christian coordinated work management christian synchronized work management christian harmonized work management christian aligned work management christian balanced work management christian optimized work management christian efficient work
+christian effective work management christian productive work management christian profitable work management christian sustainable work management christian resilient work management christian adaptable work management christian flexible work
+christian agile work management christian lean work management christian six sigma work management christian total quality management tqm christian continuous improvement management christian kaizen management christian innovation management
+christian creativity management christian design thinking management christian human-centered design management christian user-centered design management christian customer-centered design management christian employee-centered design management
+christian stakeholder-centered design management christian community-centered design management christian society-centered design management christian environment-centered design management christian planet-centered design management christian universe-centered design
+christian cosmos-centered design management christian god-centered design management christian christ-centered design management christian spirit-centered design management christian soul-centered design management christian heart-centered design management
+christian mind-centered design management christian body-centered design management christian holistic design management christian integral design management christian comprehensive design management christian complete design management christian total design
+christian universal design management christian inclusive design management christian accessible design management christian barrier-free design management christian disability-friendly design management christian age-friendly design management christian child-friendly design
+christian family-friendly design management christian pet-friendly design management christian eco-friendly design management christian environmentally-friendly design management christian sustainable design management christian green design management christian biophilic design
+christian biomimetic design management christian nature-inspired design management christian organic design management christian natural design management christian vernacular design management christian indigenous design management christian traditional design management
+christian cultural design management christian historical design management christian heritage design management christian legacy design management christian ancestral design management christian ancient design management christian classical design management
+christian modern design management christian contemporary design management christian futuristic design management christian avant-garde design management christian experimental design management christian radical design management christian revolutionary design management
+christian transformative design management christian disruptive design management christian breakthrough design management christian paradigm-shifting design management christian game-changing design management christian industry-leading design management christian cutting-edge design
+christian state-of-the-art design management christian best-in-class design management christian world-class design management christian award-winning design management christian prize-winning design management christian recognized design management christian acclaimed design
+christian celebrated design management christian distinguished design management christian eminent design management christian renowned design management christian famous design management christian legendary design management christian iconic design management
+christian signature design management christian flagship design management christian premium design management christian luxury design management christian exclusive design management christian bespoke design management christian custom design management
+christian personalized design management christian individualized design management christian tailored design management christian made-to-measure design management christian made-to-order design management christian custom-made design management christian handcrafted design management
+christian artisan design management christian craft design management christian craftsmanship design management christian mastercraft design management christian skilled craft design management christian expert craft design management christian professional craft design management
+christian specialist craft design management christian virtuoso craft design management christian maestro craft design management christian master craft design management christian grand master craft design management christian legendary craft design management christian iconic craft design

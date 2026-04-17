@@ -1,0 +1,424 @@
+# Education Keywords Database
+# Comprehensive list for detecting Education content
+
+# ===== ACADEMIC SUBJECTS =====
+lecture
+course
+class
+lesson
+tutorial
+education
+learning
+teaching
+studying
+school
+university
+college
+academy
+institute
+campus
+degree program
+undergraduate
+graduate
+postgraduate
+masters degree
+phd doctorate
+bachelor degree
+associate degree
+certificate program
+diploma course
+continuing education
+professional development
+executive education
+online course
+mooc massive open online course
+distance learning
+remote learning
+hybrid learning
+blended learning
+flipped classroom
+self-paced learning
+instructor-led training
+cohort-based course
+bootcamp intensive
+workshop seminar
+webinar live session
+study group
+peer learning
+collaborative learning
+social learning
+experiential learning
+project-based learning
+problem-based learning
+inquiry-based learning
+discovery learning
+constructivist approach
+student-centered learning
+teacher-centered instruction
+differentiated instruction
+personalized learning
+adaptive learning
+competency-based education
+mastery learning
+spaced repetition
+active recall
+retrieval practice
+elaboration technique
+interleaving practice
+dual coding theory
+cognitive load theory
+working memory
+long-term memory
+encoding consolidation
+retrieval forgetting curve
+metacognition self-regulation
+growth mindset fixed mindset
+grit perseverance resilience
+motivation engagement drive
+intrinsic motivation extrinsic reward
+curiosity interest passion
+purpose meaning relevance
+autonomy competence relatedness
+self-determination theory
+goal setting achievement objective
+learning outcome competency skill
+knowledge comprehension application
+analysis synthesis evaluation
+bloom's taxonomy revised taxonomy
+depth of knowledge dok level
+webb's depth of knowledge
+marzano's taxonomy
+solo taxonomy structure observed learning
+concept mapping mind mapping
+visual organizer graphic organizer
+thinking routine visible thinking
+socratic questioning critical thinking
+logical reasoning deductive reasoning
+inductive reasoning abductive reasoning
+analogical reasoning causal reasoning
+systems thinking design thinking
+computational thinking algorithmic thinking
+abstract thinking concrete thinking
+divergent thinking convergent thinking
+creative thinking innovative thinking
+entrepreneurial thinking business acumen
+financial literacy economic understanding
+scientific literacy technological fluency
+digital literacy media literacy
+information literacy data literacy
+statistical literacy quantitative reasoning
+numeracy skill mathematical thinking
+algebraic thinking geometric reasoning
+trigonometric function calculus concept
+differential equation integral calculus
+multivariable calculus linear algebra
+matrix operation vector space
+eigenvalue eigenvector determinant
+derivative limit continuity
+optimization maximization minimization
+related rates implicit differentiation
+chain rule product rule quotient rule
+power rule exponential logarithmic
+polynomial rational trigonometric
+hyperbolic inverse function composition
+transformation translation rotation reflection
+dilation scaling symmetry tessellation
+congruence similarity proof theorem
+pythagorean theorem euclidean geometry
+non-euclidean geometry riemannian geometry
+topology manifold curvature dimension
+fractal chaos complexity theory
+game theory decision theory
+probability statistics hypothesis testing
+confidence interval significance level
+p-value t-test anova regression
+correlation causation experimental design
+random sampling control group placebo
+double-blind peer review replication
+meta-analysis systematic review
+literature review research methodology
+qualitative research quantitative research
+mixed methods action research
+case study ethnography phenomenology
+grounded theory narrative inquiry
+discourse analysis content analysis
+thematic analysis framework analysis
+constant comparative method memo writing
+axial coding open coding selective coding
+theoretical saturation purposive sampling
+snowball sampling convenience sampling
+stratified sampling cluster sampling
+systematic sampling random assignment
+quasi-experimental pre-post test
+longitudinal study cross-sectional study
+cohort study panel study time series
+interrupted time series difference-in-differences
+instrumental variable regression discontinuity
+propensity score matching Heckman correction
+selection bias confounding variable
+omitted variable reverse causality
+endogeneity exogeneity identification strategy
+causal inference counterfactual framework
+potential outcome treatment effect
+average treatment effect local average treatment effect
+intent-to-treat per-protocol as-treated
+missing data imputation multiple imputation
+maximum likelihood bayesian inference
+prior distribution posterior distribution
+likelihood function marginal likelihood
+model selection cross-validation regularization
+ridge lasso elastic net principal component
+factor analysis cluster analysis discriminant analysis
+logistic regression probit model tobit model
+count data poisson negative binomial
+survival analysis hazard ratio cox proportional
+time-to-event kaplan-meier log-rank test
+competing risks multi-state model joint model
+dynamic panel system gmm difference gmm
+panel data fixed effect random effect
+hierarchical linear model multilevel model
+mixed model random intercept random slope
+variance component intraclass correlation
+design effect clustering effect survey weight
+post-stratification raking calibration weighting
+non-response bias measurement error
+recall bias social desirability bias
+acquiescence bias extreme responding
+midpoint responding satisficing cognitive burden
+question wording response order context effect
+priming framing anchoring availability heuristic
+representativeness heuristic affect heuristic
+status quo bias loss aversion endowment effect
+sunk cost fallacy confirmation bias hindsight bias
+overconfidence bias optimism bias planning fallacy
+base rate neglect conjunction fallacy gambler's fallacy
+hot hand fallacy law small numbers regression toward mean
+sampling variability standard error confidence band
+prediction interval tolerance interval reference range
+clinical significance practical significance effect size
+cohens d hedges g glass delta odds ratio
+risk ratio risk difference number needed treat
+sensitivity specificity positive predictive value
+negative predictive value likelihood ratio diagnostic accuracy
+roc curve auc youden index cut-off point
+threshold optimization decision curve analysis
+cost-effectiveness cost-benefit cost-utility
+quality-adjusted life year disability-adjusted life year
+incremental cost-effectiveness ratio willingness-to-pay
+budget impact analysis health technology assessment
+systematic review meta-analysis network meta-analysis
+mixed treatment comparison multiple treatment comparison
+bayesian meta-analysis frequentist meta-analysis
+fixed-effect model random-effects model heterogeneity
+inconsistency publication bias small-study effect
+funnel plot egger test begg test trim-and-fill
+fail-safe n cumulative meta-analysis recursive cumulative
+prospective meta-analysis individual participant data
+aggregate data summary statistic combined estimate
+pooled analysis pooled variance weighted average
+inverse-variance weighting sample-size weighting
+quality-effects model quality indicator risk bias
+allocation concealment blinding procedure
+intention-to-treat complete case available case
+worst-case best-case sensitivity analysis
+scenario analysis probabilistic sensitivity analysis
+deterministic sensitivity analysis one-way sensitivity
+multi-way sensitivity tornado diagram spider plot
+cost-effectiveness acceptability curve efficiency frontier
+dominated extended dominance strong dominance weak dominance
+net monetary benefit net health benefit opportunity cost
+shadow price discount rate time preference
+annualization capital recovery annuity equivalent
+present value future value net present value
+internal rate return benefit-cost ratio payback period
+break-even analysis sensitivity threshold switching value
+critical assumption key driver uncertainty parameter
+value information expected value perfect information
+expected value partial perfect information population value
+individual value research priority setting evidence gap
+research recommendation future research direction
+limitation weakness strength caveat caution
+generalizability external validity internal validity
+construct validity content validity criterion validity
+concurrent predictive convergent discriminant
+known-group factorial structural measurement invariance
+configural metric scalar strict differential item functioning
+item response theory rasch model two-parameter three-parameter
+graded response partial credit rating scale many-facet
+person separation item separation reliability index
+standard error measurement minimal detectable change
+minimal clinically important difference patient acceptable symptom state
+outcome measure endpoint surrogate marker
+biomarker clinical endpoint patient-reported outcome
+performance outcome physiological measure behavioral observation
+direct assessment indirect assessment formative summative
+diagnostic prognostic screening assessment needs assessment
+readiness assessment placement assessment proficiency assessment
+aptitude test achievement test intelligence test
+personality test interest inventory values assessment
+skill assessment competency evaluation performance appraisal
+360-degree feedback self-assessment peer assessment
+manager assessment subordinate assessment customer assessment
+multi-rater feedback upward feedback downward feedback
+lateral feedback internal customer external stakeholder
+balanced scorecard kpi key performance indicator
+objective key result okr goal cascade strategy map
+performance dashboard analytics platform data visualization
+business intelligence descriptive analytics predictive analytics
+prescriptive analytics diagnostic analytics cognitive analytics
+augmented analytics automated insight natural language generation
+natural language processing computer vision speech recognition
+machine learning deep learning reinforcement learning
+supervised learning unsupervised learning semi-supervised
+self-supervised contrastive learning transfer learning
+domain adaptation multi-task learning meta-learning
+few-shot learning zero-shot learning one-shot learning
+continual learning lifelong learning curriculum learning
+distillation pruning quantization neural architecture search
+automl hyperparameter optimization bayesian optimization
+grid search random search evolutionary algorithm
+particle swarm simulated annealing genetic algorithm
+gradient descent stochastic gradient mini-batch gradient
+momentum nesterov adam adagrad rmsprop adadelta
+learning rate scheduling warm restart cyclic learning rate
+batch normalization layer normalization instance normalization
+group normalization weight normalization spectral normalization
+dropout dropconnect stochastic depth shake-shake
+shake-drop label smoothing mixup cutmix augment mix
+cutout random erasing adversarial training virtual adversarial
+entropy minimization consistency regularization pseudo-labeling
+self-training co-training multi-view learning ensemble method
+bagging boosting stacking blending voting classifier
+random forest gradient boosting xgboost lightgbm catboost
+support vector machine kernel trick radial basis function
+polynomial kernel sigmoid kernel laplacian kernel chi-square
+string kernel graph kernel tree kernel convolution kernel
+attention mechanism transformer architecture self-attention
+multi-head attention scaled dot-product positional encoding
+learned position relative position axial attention sparse attention
+local attention global attention linear attention performer linear transformer
+routing network mixture experts switch transformer gshard
+conditional computation dynamic routing capsule network
+graph neural network graph convolution graph attention
+message passing spatial temporal spectral graph conv
+knowledge graph embedding transductive inductive
+node classification link prediction graph classification
+community detection graph clustering graph generation
+variational graph autoencoder adversarial graph embedding
+reinforcement learning policy gradient actor-critic
+q-learning deep q-network double q-network dueling network
+prioritized experience replay distributional rainbow
+soft actor-critic twin delayed ddpg sac td3 ppo trpo
+model-based model-free model predictive control
+imitation learning inverse reinforcement learning apprenticeship learning
+behavior cloning dagger inverse optimal control maximum entropy
+path integral guided policy search cross-entropy method
+covariance matrix adaptation evolution strategy neuroevolution
+augmenting topology hyperneat sharpnes aware minimization
+lookahead optimizer lamb optimizer adamw optimizer
+ranger optimizer adam-nc sgd-momentum nesterov accelerated gradient
+quasi-newton lbfgs conjugate gradient trust region
+levenberg-marquardt gauss-newton irls iteratively reweighted least squares
+em algorithm expectation-maximization variational inference
+mean-field structured mean-field loopy belief propagation
+junction tree variable elimination sum-product algorithm
+max-product min-sum linear programming relaxation
+semidefinite programming quadratic programming integer programming
+mixed-integer convex optimization non-convex optimization
+global optimization local optimum saddle point escape
+second-order method hessian-vector product kronecker-factored
+unit-wise layer-wise block-coordinate alternating direction
+primal-dual augmented lagrangian penalty method barrier method
+interior-point path-following predictor-corrector affine-scaling
+homotopy continuation branch-cut bound-constrained box-constraint
+linear constraint nonlinear constraint equality constraint inequality
+feasible region constraint qualification karush-kuhn-tucker
+lagrange multiplier dual problem lagrangian duality strong duality
+weak duality duality gap complementary slackness certificate
+farkas lemma separating hyperplane supporting hyperplane
+convex hull polyhedron cone halfspace simplex vertex
+extreme point basic feasible solution degeneracy cycling
+lexicographic perturbation symbolic pertation numerical stability
+rounding error floating-point arithmetic condition number
+ill-conditioned ill-posed regularization tikhonov total variation
+elastic net fused lasso group lasso sparse group lasso
+overlap group hierarchical structured sparsity low-rank
+nuclear norm matrix completion robust pca principal component pursuit
+compressive sensing compressed sampling sparse representation
+dictionary learning k-svd method of optimal directions
+matching pursuit orthogonal matching pursuit iterative hard thresholding
+approximate message passing basis pursuit lasso least angle regression
+homotopy algorithm parametric simplex pivoting rule
+revised simplex network simplex dual simplex criss-cross
+ellipsoid method cutting-plane column generation branch-price
+branch-and-cut branch-and-bound branch-and-price branch-reduce
+spatial branch deterministic global optimization alpha-branching
+McCormick relaxation convex envelope concave envelope
+piecewise linear approximation disjunctive programming generalized benders
+outer approximation feasibility pump local branching proximity search
+population-based metaheuristic swarm intelligence ant colony optimization
+particle swarm optimization artificial bee colony firefly algorithm
+cuckoo search bat algorithm harmony search differential evolution
+genetic programming gene expression programming evolutionary strategy
+evolutionary programming covariance matrix adaptation immune algorithm
+clonal selection negative selection danger theory artificial immune system
+memetic algorithm cultural algorithm biogeography-based optimization
+gravitational search algorithm charged system search ray optimization
+teaching-learning-based optimization Jaya algorithm TLBO
+gaining-sharing knowledge human mental search election-based optimization
+political optimizer team game algorithm league championship
+soccer competition football match algorithm bowling algorithm
+cricket tournament golf optimization tennis optimization
+volleyball premier league baseball optimization basketball optimization
+hockey algorithm rugby algorithm american football formula one racing
+car race motorcycle race bicycle race marathon running swimming competition
+diving competition gymnastics figure skating ice hockey speed skating
+ski jumping cross-country skiing biathlon snowboarding curling bobsled
+luge skeleton water polo synchronized swimming platform diving springboard
+artistic gymnastics rhythmic gymnastics trampoline badminton table tennis
+tennis squash racquetball handball beach volleyball indoor volleyball
+football soccer american football canadian football australian rules gaelic football
+rugby league rugby union cricket baseball softball kickball rounders
+pesäpallo lapta cricket test match odi t20 ipl big bash cpl psl bbl
+county championship ashes world cup champions trophy asia cup caribbean premier
+pakistan super league bangladesh premier league lanka premier league afghanistan premier league
+icc ranking fifa ranking atp ranking wta ranking golf pga tour european tour
+asian tour pga tour champions lpga tour ladies european tour alpg tour japan golf tour
+sunshine tour web.com tour challenge tour men world ranking women world golf ranking
+formula one formula two formula three formula e indycar nascar cup series xfinity series
+truck series nhra drag racing world rally championship motogp superbike world championship
+endurance racing le mans 24 hours daytona 24 hours sebring 12 hours spa 24 hours nürburgring 24
+imsc wec imsa eltcc asian le mans european le mans michelin le mans cup vde vln rcn
+dtm btcc wtcc wrc wrx erc irc aprc mercosur codasur camso fia fime upme fns asp
+imsa acc weathertech sportscar championship european le mans series asian le mans series
+gulf 12 hours dubai 24 hour abu dhabi 24 hour hannover 24 hours creventic 24h series
+touring car endurance gt world challenge gt world challenge europe gt world challenge america
+gt world challenge asia gt world challenge australia intercontinental gt challenge sro motorsports group
+stephen platt rao qiang jin peng xavi julius sebastian marc rovy marcel yannick
+laurens vanthoor dries vanthoor rené rast mike rockenfeller timo scheider edoardo mortara
+maro engel raffaele marciello felix rosenqvist pascal wehrlein mick schumacher nikita mazepin
+kevin magnussen romain grosjean nico hulkenberg esteban ocon pierre gasly charles leclerc
+carlos sainz lando norris george russell max verstappen sergio perez valtteri bottas
+zhou guanyu yuki tsunoda alexander albon nicholas latifi fernando alonso lance stroll
+esteban ocon sebastian vettel kimmi raikkonen antonio giovinazzi daniel ricciardo
+lando norris carlos sainz jr charles leclerc max emilian verstappen alexander albon
+george russell nicholas latifi sergey sirotkin robert kubica anthony davidson sebastien buemi
+kazuki nakajima brendon hartley pierre gasly tanasak tongyai alex Lynn oliver turvey
+felipe massa jerome d'ambrosio lucas di grassi sam bird robin frijns rené rast
+andre lotterer neel jani marc lieb roman rusinov filipe albuquerque ben hanley
+vitaly petrov mike conway kamui kobayashi jose maria lopez nyck de vries simon trummer
+stéphane sarrazin dominik kraihamer tsugio matsuda ronnie quintarelli juichi wakisaka
+yuji tachikawa kenta Yamashita kazuya oshima sho tsuboi sachaa fenestraz ryō hirakawa
+mitsunori takaboshi daiki sasaki yuhi sekiguchi kazuto kotaka hiroyoshi tsuboi
+junichiro yamamoto takashi kobayashi masataka yanagida joao paulo de oliveira
+koudai tsukakoshi hideki mutou naoki yokomizo takuya izawa shinya hosokawa
+yuhki nakayama hiroaki ishiiura kohei hirate yuji kunimoto katsuyuki hiranaka
+haruki kurosawa takuto iguchi hideki yamauchi masami kageyama yasutaka yoshimoto
+hiroki yoshimoto satoru sakaniwa takuya kawabata kota sasaki masataka yanagida
+nobuteru taniguchi manabu orido takaaki nakazumi jun harada tomonobu fujii
+masayuki ueda daishi yamakawa shinichi takagi rikko koyama yujihi akamine
+hironori takeuchi takamitsu matsui naoya gamou junichiro yamamoto hiroshi yoshimoto
+kota sasaki junichi umekawa masataka yanagida hidenobu matsumoto jun harada
+tomonobu fujii masayuki ueda daishi yamakawa shinichi takagi rikko koyama
+yujihi akamine hironori takeuchi takamitsu matsui naoya gamou junichiro yamamoto
+hiroshi yoshimoto kota sasaki junichi umekawa masataka yanagida hidenobu matsumoto

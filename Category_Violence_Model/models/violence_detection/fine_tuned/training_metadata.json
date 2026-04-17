@@ -1,0 +1,21 @@
+{
+  "training_date": "2026-03-13 19:43:07",
+  "dataset": {
+    "total_samples": 19996,
+    "violence_samples": 9999,
+    "nonviolence_samples": 9997
+  },
+  "performance": {
+    "accuracy": "100.00%",
+    "precision": "100.00%",
+    "recall": "100.00%"
+  },
+  "settings": {
+    "epochs": 15,
+    "batch_size": 32,
+    "img_size": [
+      224,
+      224
+    ]
+  }
+}

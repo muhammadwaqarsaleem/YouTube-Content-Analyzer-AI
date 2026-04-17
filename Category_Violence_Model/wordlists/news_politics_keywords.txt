@@ -1,0 +1,178 @@
+# News & Politics Keywords Database
+# Comprehensive list for detecting News & Politics content
+
+# ===== BREAKING NEWS & URGENCY =====
+breaking news
+news alert
+news update
+just in
+developing story
+exclusive report
+investigative journalism
+special report
+live coverage
+real-time update
+flash bulletin
+urgent news
+latest development
+breaking update
+news flash
+on the scene
+field report
+correspondent report
+eye witness
+ground zero
+epicenter crisis
+emergency situation
+rapid response
+immediate coverage
+continuous coverage
+rolling news
+24/7 coverage
+all day coverage
+overnight coverage
+weekend coverage
+holiday coverage
+
+# ===== CONFLICT & MILITARY =====
+war warfare armed conflict
+military operation military action
+armed forces armed services
+defense department pentagon
+national security homeland security
+intelligence agency intelligence community
+cia nsa fbi dea atf
+secret service coast guard
+national guard reserve force
+active duty veteran service member
+deployment mobilization deployment
+combat zone theater operations
+forward base military base
+naval station air force base
+marine corps army navy
+air force space force cyber command
+special operations special forces
+navy seals delta force
+green berets rangers marines
+paratroopers commandos operators
+tactical team swat counter-terrorism
+homeland defense border security
+immigration enforcement customs protection
+coast guard maritime security
+port security harbor patrol
+anti-piracy counter-smuggling
+drug interdiction human trafficking
+arms control non-proliferation
+disarmament treaty verification
+weapons inspection sanctions enforcement
+trade embargo economic sanctions
+diplomatic pressure political isolation
+regime change regime stability
+government overthrow coup d'état
+military junta transitional government
+interim administration caretaker government
+coalition government unity government
+power-sharing arrangement peace process
+ceasefire agreement armistice treaty
+peace treaty surrender document
+capitulation unconditional surrender
+victory defeat stalemate
+standoff impasse deadlock
+negotiation breakdown talks collapse
+diplomatic incident international crisis
+foreign affair state affair
+public affair private affair
+classified information top secret
+security clearance background check
+sensitive compartmented information
+special access program black budget
+covert operation clandestine operation
+black ops deniable operation
+false flag psyop propaganda
+information warfare cyber warfare
+electronic warfare signal intelligence
+communications intelligence imagery intelligence
+measurement signature intelligence
+human intelligence open source intelligence
+counter-intelligence counter-espionage
+counter-surveillance counter-subversion
+counter-insurgency counter-terrorism
+counter-proliferation counter-narcotics
+counter-money laundering counter-financing terrorism
+sanctions evasion export control
+dual-use technology strategic trade
+missile technology nuclear technology
+chemical weapon biological weapon
+radiological weapon conventional weapon
+non-lethal weapon less-lethal weapon
+crowd control riot control
+tear gas rubber bullets water cannon
+sound cannon microwave weapon laser weapon
+directed energy electromagnetic pulse
+nuclear electromagnetic pulse high-altitude emp
+solar flare geomagnetic storm
+space weather satellite communication
+gps navigation satellite imagery
+reconnaissance surveillance target acquisition
+battlefield awareness situational awareness
+common operating picture command center
+war room operations center
+emergency operations center eoc
+crisis management center cmc
+joint operations center joc
+tactical operations center toc
+combat operations center coc
+fire support coordination center fscc
+air support operations center asoc
+combined air operations center caoc
+area operations center aoc
+regional operations center roc
+national operations center noc
+white house situation room
+pentagon national military command center nmcc
+nato headquarters supreme allied commander
+united nations security council
+international criminal court icc
+international court justice icj
+permanent court arbitration pca
+world trade organization wto
+international monetary fund imf
+world bank group regional development bank
+asian development bank african development bank
+inter-american development bank european bank reconstruction
+european investment bank asian infrastructure investment bank
+new development bank brics bank silk road fund
+belt road initiative one belt one road
+maritime silk road twenty-first century silk road
+trans-pacific partnership trans-atlantic trade investment
+comprehensive economic trade agreement cefta
+regional comprehensive economic partnership rcep
+african continental free trade area afcfta
+usmca united states mexico canada agreement
+nafta north american free trade agreement
+cafta dominican republic central america free trade
+mercosur southern common market union south american nations
+andean community caricom pacific alliance
+gulf cooperation council gcc arab league
+organization islamic cooperation oic shanghai cooperation organization sco
+economic cooperation organization eco south asian association regional cooperation saarc
+association southeast asian nations asean asia-pacific economic cooperation apec
+forum small island states aosis caribbean community caricom
+east african community eac southern african development community sadc
+economic community west african states ecowas intergovernmental authority development igad
+lake tanganyika authority lta niger basin authority nba
+senegal river basin organization omvs gambya river basin authority omvg
+volta basin authority avb congo basin authority cib
+zambezi watercourse commission zamcom okavango river authority okacom
+limpopo basin authority laboca komati basin authority komac
+usuthu tembole pongola utrip inhagombe river authority irha
+mazowe river authority mra save river authority sra
+ Runde river authority rra manyame river authority mfra
+Sanyati river authority sra charara river authority cra
+Mupata gorge authority mga chizvirira river authority cra
+Chiredzi river authority cra mwenezi river authority mra
+Bubi river authority bra gwayi river authority gra
+Shangani river authority sra umguza river authority ura
+Khami river authority kra matobo river authority mra
+Tuli river authority tra motloutse river authority mra
+Limpopo shashe authority lsa nascent river authority nra
