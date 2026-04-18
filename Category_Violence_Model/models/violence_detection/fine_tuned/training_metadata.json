@@ -1,21 +1,3 @@
-{
-  "training_date": "2026-03-13 19:43:07",
-  "dataset": {
-    "total_samples": 19996,
-    "violence_samples": 9999,
-    "nonviolence_samples": 9997
-  },
-  "performance": {
-    "accuracy": "100.00%",
-    "precision": "100.00%",
-    "recall": "100.00%"
-  },
-  "settings": {
-    "epochs": 15,
-    "batch_size": 32,
-    "img_size": [
-      224,
-      224
-    ]
-  }
-}
+version https://git-lfs.github.com/spec/v1
+oid sha256:109300c0d25571ca45e972e46490a0f4a906c70ba8f5205c372f8ee68f9620ea
+size 383
