@@ -1,0 +1,9 @@
+transformers
+accelerate
+scikit-learn
+pandas
+sentencepiece
+protobuf
+torch
+seaborn
+matplotlib

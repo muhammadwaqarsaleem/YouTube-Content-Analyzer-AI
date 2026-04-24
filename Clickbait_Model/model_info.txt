@@ -1,0 +1,34 @@
+Module folder  : Clickbait_Model/
+Entry file     : Clickbait_Model/harm_detector_Main.py
+Function       : run_harm_detector(title, description, transcript)
+
+Global variables needed from root:
+──────────────────────────────────────────────
+Variable      Type    Description
+──────────────────────────────────────────────
+title         str     YouTube video title
+description   str     YouTube video description
+transcript    str     Video transcript/captions
+──────────────────────────────────────────────
+
+We do NOT need a URL.
+We need the text already fetched and passed in.
+
+Returns:
+  label_name    (str)
+  label         (int)   0–6
+  confidence    (float)
+  probabilities (dict)  all 7 scores
+
+
+  how to call my model 
+"""
+from Clickbait_Model.harm_detector_Main import run_harm_detector
+
+result = run_harm_detector(
+    title       = global_title,
+    description = global_description,
+    transcript  = global_transcript,
+)
+print(result["label_name"])
+"""

@@ -1,0 +1,11 @@
+Generated: 2026-03-01T16:59:59.601644
+
+              precision    recall  f1-score   support
+
+     General     0.7794    0.8022    0.7906       273
+        Teen     0.5648    0.4729    0.5148       129
+      Mature     0.7227    0.7644    0.7430       225
+
+    accuracy                         0.7209       627
+   macro avg     0.6890    0.6798    0.6828       627
+weighted avg     0.7149    0.7209    0.7168       627

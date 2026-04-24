@@ -1,0 +1,69 @@
+﻿# ============================================================
+# YOUTUBE VIDEO ANALYSIS - REALISTIC REQUIREMENTS
+# ============================================================
+# Core dependencies for video analysis, ML inference, and API
+# ============================================================
+
+# ------------------------------------------------------------
+# WEB FRAMEWORK & API
+# ------------------------------------------------------------
+fastapi==0.120.0
+uvicorn==0.38.0
+python-multipart==0.0.21
+
+# ------------------------------------------------------------
+# VIDEO PROCESSING & YOUTUBE EXTRACTION
+# ------------------------------------------------------------
+yt-dlp==2026.3.3
+youtube-transcript-api==1.2.4
+opencv-python==4.12.0.88
+Pillow==12.1.0
+
+# ------------------------------------------------------------
+# CORE MACHINE LEARNING
+# ------------------------------------------------------------
+numpy==2.2.6
+pandas==2.3.3
+scikit-learn==1.7.2
+xgboost==3.2.0
+joblib==1.5.2
+
+# ------------------------------------------------------------
+# DEEP LEARNING (TENSORFLOW)
+# ------------------------------------------------------------
+tensorflow==2.20.0
+keras==3.11.3
+h5py==3.15.1
+
+# ------------------------------------------------------------
+# PYTORCH & TRANSFORMERS (for advanced features)
+# ------------------------------------------------------------
+# Note: Adjust CUDA version based on your GPU (cu124 = CUDA 12.4)
+torch==2.6.0+cu124
+torchaudio==2.6.0+cu124
+torchvision==0.21.0+cu124
+transformers==4.57.6
+
+# ------------------------------------------------------------
+# UTILITIES
+# ------------------------------------------------------------
+requests==2.32.5
+PyYAML==6.0.3
+tqdm==4.67.0
+filelock==3.20.3
+regex==2024.11.6
+
+# ------------------------------------------------------------
+# OPTIONAL - CLOUD STORAGE (Uncomment if needed)
+# ------------------------------------------------------------
+# boto3==1.36.3              # AWS S3
+# google-cloud-storage       # Google Cloud
+# azure-storage-blob         # Azure Storage
+
+# ------------------------------------------------------------
+# OPTIONAL - DEVELOPMENT TOOLS (Uncomment if needed)
+# ------------------------------------------------------------
+# pytest                     # Testing
+# black                      # Code formatting
+# flake8                     # Linting
+# jupyter                    # Notebooks
