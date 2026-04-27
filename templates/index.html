@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>YouTube Content Analyzer AI — Dashboard</title>
+  <meta name="description" content="AI-powered YouTube video analysis dashboard. Paste any YouTube URL to get instant age classification, harm detection, impact scoring, category prediction, and violence analysis." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/static/css/dashboard.css" />
+</head>
+<body>
+
+  <!-- ─── HEADER ─────────────────────────────────────────────────────── -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">▶</span>
+        <span class="logo-text">ContentAI</span>
+      </div>
+      <div class="header-badge">AI-Powered Analysis</div>
+    </div>
+  </header>
+
+  <!-- ─── HERO / INPUT ──────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero-bg-orbs">
+      <div class="orb orb-1"></div>
+      <div class="orb orb-2"></div>
+      <div class="orb orb-3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">5 AI Models · Real-time Insights</div>
+      <h1 class="hero-title">YouTube Content<br /><span class="gradient-text">Analyzer</span></h1>
+      <p class="hero-subtitle">Paste any YouTube URL and get deep AI analysis — age rating, harm detection, impact score, content category, and violence detection, all in one dashboard.</p>
+
+      <form class="search-form" id="analyzeForm" autocomplete="off">
+        <div class="search-box">
+          <span class="search-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.96C18.88 4 12 4 12 4s-6.88 0-8.59.46A2.78 2.78 0 0 0 1.46 6.42 29 29 0 0 0 1 11.75a29 29 0 0 0 .46 5.33A2.78 2.78 0 0 0 3.41 19.1C5.12 19.56 12 19.56 12 19.56s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95 29 29 0 0 0 .46-5.29 29 29 0 0 0-.46-5.44z"/>
+              <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02"/>
+            </svg>
+          </span>
+          <input
+            type="url"
+            id="urlInput"
+            class="search-input"
+            placeholder="https://www.youtube.com/watch?v=..."
+            required
+            autocomplete="off"
+          />
+          <button type="submit" class="analyze-btn" id="analyzeBtn">
+            <span class="btn-text">Analyze</span>
+            <span class="btn-icon">→</span>
+          </button>
+        </div>
+        <div class="search-hint">Try any YouTube video URL — we'll handle the rest</div>
+      </form>
+
+      <!-- Model badges -->
+      <div class="model-badges">
+        <span class="model-badge">🔞 Age Rating</span>
+        <span class="model-badge">🎣 Harm Detection</span>
+        <span class="model-badge">📊 Impact Score</span>
+        <span class="model-badge">🏷️ Category</span>
+        <span class="model-badge">🚨 Violence</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── LOADING STATE ─────────────────────────────────────────────── -->
+  <section class="loading-section hidden" id="loadingSection">
+    <div class="loading-card">
+      <div class="loading-spinner-ring">
+        <svg viewBox="0 0 100 100" class="spinner-svg">
+          <circle cx="50" cy="50" r="42" class="spinner-track" />
+          <circle cx="50" cy="50" r="42" class="spinner-fill" />
+        </svg>
+        <div class="spinner-play">▶</div>
+      </div>
+      <h2 class="loading-title">Analyzing Video</h2>
+      <p class="loading-subtitle" id="loadingVideoTitle">Please wait while our AI models process the content…</p>
+      <div class="loading-steps">
+        <div class="loading-step" id="step-metadata">
+          <span class="step-dot"></span>
+          <span class="step-label">Fetching video metadata</span>
+        </div>
+        <div class="loading-step" id="step-transcript">
+          <span class="step-dot"></span>
+          <span class="step-label">Extracting transcript</span>
+        </div>
+        <div class="loading-step" id="step-age">
+          <span class="step-dot"></span>
+          <span class="step-label">Running Age Classifier (RoBERTa)</span>
+        </div>
+        <div class="loading-step" id="step-harm">
+          <span class="step-dot"></span>
+          <span class="step-label">Running Harm Detector (RoBERTa 7-class)</span>
+        </div>
+        <div class="loading-step" id="step-impact">
+          <span class="step-dot"></span>
+          <span class="step-label">Computing Impact Score</span>
+        </div>
+        <div class="loading-step" id="step-category">
+          <span class="step-dot"></span>
+          <span class="step-label">Predicting Category (LightGBM)</span>
+        </div>
+        <div class="loading-step" id="step-violence">
+          <span class="step-dot"></span>
+          <span class="step-label">Violence Detection (ResNet-50)</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── RESULTS ───────────────────────────────────────────────────── -->
+  <div class="results-layout hidden" id="resultsLayout">
+
+    <!-- Sticky sidebar -->
+    <aside class="results-sidebar" id="resultsSidebar">
+      <div class="sidebar-inner">
+        <div class="sidebar-label">Jump to section</div>
+        <nav class="sidebar-nav">
+          <a href="#sec-video"    class="sidebar-link active" data-section="sec-video">    <span class="sl-icon">🎬</span> Video Info</a>
+          <a href="#sec-age"      class="sidebar-link"        data-section="sec-age">      <span class="sl-icon">🔞</span> Age Rating</a>
+          <a href="#sec-harm"     class="sidebar-link"        data-section="sec-harm">     <span class="sl-icon">🎣</span> Harm Detection</a>
+          <a href="#sec-impact"   class="sidebar-link"        data-section="sec-impact">   <span class="sl-icon">📊</span> Impact Score</a>
+          <a href="#sec-category" class="sidebar-link"        data-section="sec-category"> <span class="sl-icon">🏷️</span> Category</a>
+          <a href="#sec-violence" class="sidebar-link"        data-section="sec-violence"> <span class="sl-icon">🚨</span> Violence</a>
+        </nav>
+        <button class="sidebar-new-btn" id="newAnalysisBtn">+ New Analysis</button>
+      </div>
+    </aside>
+
+    <!-- Main results area -->
+    <main class="results-main">
+
+      <!-- ── 0: Video Summary ─────────────────────────────────────── -->
+      <section class="result-card card-video" id="sec-video">
+        <div class="card-header">
+          <span class="card-icon">🎬</span>
+          <h2 class="card-title">Video Overview</h2>
+        </div>
+        <div class="video-summary" id="videoSummary">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── 1: Age Classification ─────────────────────────────── -->
+      <section class="result-card card-age" id="sec-age">
+        <div class="card-header">
+          <span class="card-icon">🔞</span>
+          <h2 class="card-title">Age Classification</h2>
+          <span class="card-model-tag">Hierarchical RoBERTa</span>
+        </div>
+        <div id="ageContent">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── 2: Harm / Clickbait ───────────────────────────────── -->
+      <section class="result-card card-harm" id="sec-harm">
+        <div class="card-header">
+          <span class="card-icon">🎣</span>
+          <h2 class="card-title">Clickbait &amp; Harm Detection</h2>
+          <span class="card-model-tag">RoBERTa 7-class</span>
+        </div>
+        <div id="harmContent">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── 3: Impact Score ────────────────────────────────────── -->
+      <section class="result-card card-impact" id="sec-impact">
+        <div class="card-header">
+          <span class="card-icon">📊</span>
+          <h2 class="card-title">Impact Score Analysis</h2>
+          <span class="card-model-tag">Multi-dimension v9</span>
+        </div>
+        <div id="impactContent">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── 4: Category ────────────────────────────────────────── -->
+      <section class="result-card card-category" id="sec-category">
+        <div class="card-header">
+          <span class="card-icon">🏷️</span>
+          <h2 class="card-title">Content Category</h2>
+          <span class="card-model-tag">LightGBM / XGBoost</span>
+        </div>
+        <div id="categoryContent">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+      <!-- ── 5: Violence ────────────────────────────────────────── -->
+      <section class="result-card card-violence" id="sec-violence">
+        <div class="card-header">
+          <span class="card-icon">🚨</span>
+          <h2 class="card-title">Violence Detection</h2>
+          <span class="card-model-tag">ResNet-50 / Computer Vision</span>
+        </div>
+        <div id="violenceContent">
+          <!-- Populated by JS -->
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ─── ERROR TOAST ───────────────────────────────────────────────── -->
+  <div class="error-toast hidden" id="errorToast">
+    <span class="toast-icon">⚠️</span>
+    <span class="toast-msg" id="toastMsg">An error occurred.</span>
+    <button class="toast-close" id="toastClose">✕</button>
+  </div>
+
+  <script src="/static/js/dashboard.js"></script>
+</body>
+</html>

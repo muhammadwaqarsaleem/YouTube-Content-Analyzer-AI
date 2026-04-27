@@ -229,42 +229,188 @@ class GlobalOrchestrator:
         self.category_manager = ModelSpecsManager()
         logger.info("Initialization complete.")
 
-    def analyze(self, url: str):
-        logger.info(f"=== Starting Global Analysis for {url} ===")
+    def _run_pipeline(self, url: str):
+        """Shared core pipeline: fetches data and runs all models. Returns raw results tuple."""
         video_id = self.fetcher.extract_video_id(url)
 
-        # 1. Fetching Phase
-        logger.info("--- Data Fetching ---")
-        try:
-            metadata = self.fetcher.fetch_video_metadata(video_id)
-        except Exception as e:
-            logger.error(f"Failed to fetch metadata: {e}")
-            return
-            
-        comments = self.fetcher.fetch_comments(video_id)
-        transcript = self.fetcher.fetch_transcript(video_id)
-
-        title = metadata.get('title', '')
-        description = metadata.get('description', '')
-
-        # 2. Model Inference Phase (Concurrent)
-        logger.info("--- Model Inference (Running Concurrently) ---")
-        
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
+            # Phase 1: Start models that do their own fetching immediately
+            logger.info("Background: Starting Violence and Category models...")
+            future_violence = executor.submit(self.violence_manager.analyze_violence, url, True)
+            future_category = executor.submit(self.category_manager.analyze_video, url, True)
+
+            # Phase 2: Fetch data required for the other models
+            logger.info("--- Data Fetching (Sequential for Text Models) ---")
+            metadata = self.fetcher.fetch_video_metadata(video_id)
+            comments = self.fetcher.fetch_comments(video_id)
+            transcript = self.fetcher.fetch_transcript(video_id)
+
+            title = metadata.get('title', '')
+            description = metadata.get('description', '')
+
+            # Phase 3: Submit text-based models now that data is ready
+            logger.info("--- Model Inference (Text Models) ---")
             future_age = executor.submit(self.age_model.predict_age, transcript_text=transcript)
             future_harm = executor.submit(run_harm_detector, title=title, description=description, transcript=transcript)
             future_impact = executor.submit(run_impact_model, video_metadata=metadata, comments=comments, transcript_text=transcript)
-            future_violence = executor.submit(self.violence_manager.analyze_violence, url, True) # quiet=True
-            future_category = executor.submit(self.category_manager.analyze_video, url, True) # quiet=True
 
+            # Phase 4: Wait for everything to complete
+            logger.info("Awaiting all results...")
             age_result = future_age.result()
             harm_result = future_harm.result()
             impact_result = future_impact.result()
             violence_out = future_violence.result()
             category_out = future_category.result()
 
-        # 3. Present Results Gracefully
+        return metadata, title, age_result, harm_result, impact_result, violence_out, category_out
+
+    def analyze(self, url: str):
+        logger.info(f"=== Starting Global Analysis for {url} ===")
+        try:
+            metadata, title, age_result, harm_result, impact_result, violence_out, category_out = self._run_pipeline(url)
+        except Exception as e:
+            logger.error(f"Failed to fetch metadata: {e}")
+            return
+        # Present Results in CLI
         self.present_results(url, title, age_result, harm_result, impact_result, violence_out, category_out)
+
+    def get_results_as_dict(self, url: str) -> dict:
+        """
+        Runs the full analysis pipeline and returns a JSON-serializable dict.
+        Used by the Flask web server. The CLI path (analyze/present_results) is unchanged.
+        """
+        logger.info(f"=== Starting Web Analysis for {url} ===")
+        metadata, title, age_result, harm_result, impact_result, violence_out, category_out = self._run_pipeline(url)
+
+        # ── Video summary ──────────────────────────────────────────────────
+        dur_s = int(metadata.get('duration_seconds', 0))
+        dur_str = f"{dur_s // 3600:02d}:{(dur_s % 3600) // 60:02d}:{dur_s % 60:02d}" if dur_s >= 3600 \
+                  else f"{dur_s // 60:02d}:{dur_s % 60:02d}"
+
+        video_id = self.fetcher.extract_video_id(url)
+        thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
+
+        video_section = {
+            "title":          title,
+            "channel":        metadata.get('channel_title', ''),
+            "published_date": metadata.get('published_date', ''),
+            "view_count":     int(metadata.get('view_count', 0)),
+            "like_count":     int(metadata.get('like_count', 0)),
+            "comment_count":  int(metadata.get('comment_count', 0)),
+            "duration":       dur_str,
+            "category_id":    metadata.get('category_name', ''),
+            "thumbnail_url":  thumbnail_url,
+            "url":            url,
+        }
+
+        # ── Age classification ─────────────────────────────────────────────
+        if age_result:
+            age_section = {
+                "label":       getattr(age_result, 'predicted_label', 'Unknown'),
+                "confidence":  round(float(getattr(age_result, 'confidence', 0.0)), 4),
+                "probabilities": {
+                    k: round(float(v), 4)
+                    for k, v in (getattr(age_result, 'probabilities', {}) or {}).items()
+                },
+                "num_chunks":  getattr(age_result, 'num_chunks_used', 0),
+                "top3_chunks": [
+                    {
+                        "rank":      c.get('rank', 0),
+                        "chunk_idx": c.get('chunk_idx', 0),
+                        "weight":    round(float(c.get('weight', 0.0)), 4),
+                        "text":      c.get('text', '')[:200],
+                    }
+                    for c in (getattr(age_result, 'top3_chunks', []) or [])
+                ],
+            }
+        else:
+            age_section = None
+
+        # ── Harm / clickbait detection ─────────────────────────────────────
+        if harm_result:
+            harm_section = {
+                "label":         harm_result.get('label_name', 'Unknown'),
+                "confidence":    round(float(harm_result.get('confidence', 0.0)), 4),
+                "probabilities": {
+                    k: round(float(v), 4)
+                    for k, v in (harm_result.get('probabilities', {}) or {}).items()
+                },
+            }
+        else:
+            harm_section = None
+
+        # ── Impact score ───────────────────────────────────────────────────
+        if impact_result:
+            ta = impact_result.get('transcript_analysis', {}) or {}
+            impact_section = {
+                "score":       round(float(impact_result.get('impact_score', 0)), 2),
+                "level":       impact_result.get('impact_level', 'unknown').upper(),
+                "dimension_scores": {
+                    k: round(float(v), 2)
+                    for k, v in (impact_result.get('dimension_scores', {}) or {}).items()
+                },
+                "key_factors":      impact_result.get('key_factors', []),
+                "excellence_bonus": round(float(impact_result.get('excellence_bonus', 0.0)), 2),
+                "reasoning":        impact_result.get('reasoning', ''),
+                "transcript_analysis": {
+                    "has_content":        bool(ta.get('transcript_has_content', 0)),
+                    "word_count":         int(ta.get('transcript_word_count', 0)),
+                    "vocab_richness":      round(float(ta.get('transcript_vocab_richness', 0)), 3),
+                    "avg_sentence_len":    round(float(ta.get('transcript_avg_sentence_len', 0)), 1),
+                    "sentiment_score":     round(float(ta.get('transcript_sentiment_score', 0)), 3),
+                    "semantic_similarity": round(float(ta.get('semantic_similarity', 0)), 3),
+                    "fk_grade_norm":       round(float(ta.get('fk_grade_norm', 0)), 3),
+                    "mtld_norm":           round(float(ta.get('mtld_norm', 0)), 3),
+                    "filler_penalty":      round(float(ta.get('filler_penalty', 0)), 3),
+                    "linguistic_score":    round(float(ta.get('linguistic_score', 0)), 3),
+                    "quality_score":       round(float(ta.get('transcript_quality_score', 0)), 3),
+                },
+            }
+        else:
+            impact_section = None
+
+        # ── Category classification ────────────────────────────────────────
+        if category_out and category_out[0]:
+            cat_res, _ = category_out
+            category_section = {
+                "primary":             cat_res.get('primary_category', 'Unknown'),
+                "primary_probability": round(float(cat_res.get('primary_probability', 0.0)), 4),
+                "all_categories": [
+                    {"category": c['category'], "probability": round(float(c['probability']), 4)}
+                    for c in (cat_res.get('all_categories', []) or [])[:10]
+                ],
+            }
+        else:
+            category_section = None
+
+        # ── Violence classification ────────────────────────────────────────
+        if violence_out and violence_out[0]:
+            v_res, _ = violence_out
+            category_section_viol = {
+                "is_violent":          bool(v_res.get('is_violent', False)),
+                "severity":            v_res.get('severity', 'NONE'),
+                "violence_percentage": round(float(v_res.get('violence_percentage', 0.0)), 2),
+                "violent_frame_count": int(v_res.get('violent_frame_count', 0)),
+                "total_frames":        int(v_res.get('total_frames', 0)),
+                "peak_confidence":     round(float(v_res.get('max_confidence', 0.0)), 4),
+                "tier_used":           int(v_res.get('tier_used', 0)),
+                "violent_timestamps":  [
+                    round(float(ts), 1)
+                    for ts in sorted(set(v_res.get('violent_frame_timestamps', []) or []))
+                ][:20],
+                "recommendation":      v_res.get('recommendation', ''),
+            }
+        else:
+            category_section_viol = None
+
+        return {
+            "video":              video_section,
+            "age_classification": age_section,
+            "harm_detection":     harm_section,
+            "impact":             impact_section,
+            "category":           category_section,
+            "violence":           category_section_viol,
+        }
 
     def present_results(self, url, title, age_result, harm_result, impact_result, violence_out, category_out):
         W = 80
@@ -531,9 +677,26 @@ if __name__ == "__main__":
         logger.error("YOUTUBE_API_KEY environment variable not set. Please define it in a .env file.")
         sys.exit(1)
         
-    # Example usage
+    # Initialize orchestrator once
     orchestrator = GlobalOrchestrator(api_key=YOUTUBE_API_KEY)
+    W = 80
     
-    # You can loop over videos or just ask the user for input
-    url = 'https://www.youtube.com/watch?v=AtRYduR16c4'
-    orchestrator.analyze(url)
+    while True:
+        print("\n" + "="*W)
+        print(" 🚀 YOUTUBE CONTENT ANALYZER (GLOBAL)")
+        print("="*W)
+        url = input("\nEnter YouTube URL (or 'exit' to quit): ").strip()
+        
+        if url.lower() in ['exit', 'quit', 'e', 'q']:
+            print("\nExiting. Goodbye!")
+            break
+            
+        if not url:
+            continue
+            
+        try:
+            orchestrator.analyze(url)
+        except Exception as e:
+            print(f"\n[ERROR] An unexpected error occurred: {e}")
+            import traceback
+            traceback.print_exc()
