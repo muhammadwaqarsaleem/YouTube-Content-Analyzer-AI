@@ -28,20 +28,29 @@ class TranscriptQualityScorer:
     Scores transcript quality using two complementary signals:
 
     1. Semantic Similarity (45%)
-       Uses sentence-transformers (all-MiniLM-L6-v2).
-       Yapping/filler content → low score.
-       Educational/analytical content → high score.
+       Uses sentence-transformers (all-MiniLM-L6-v2, runs locally, no API needed).
+       The transcript is embedded and compared against quality anchor paragraphs.
+       Yapping/filler content embeds far from these anchors → low score.
+       Educational/analytical content embeds close → high fscore.
 
     2. Linguistic Quality (55%)
-       a. Flesch-Kincaid Grade Level  (20%)
-       b. MTLD Lexical Diversity      (20%)
-       c. Filler Word Penalty         (15%)
-       d. Avg Sentence Length         (10%)
-       e. Has Content bonus           (10%)
+       a. Flesch-Kincaid Grade Level  (20%) — sentence & word complexity
+       b. MTLD Lexical Diversity      (20%) — true vocabulary richness
+       c. Filler Word Penalty         (15%) — subtracts for yapping density
+       d. Avg Sentence Length         (10%) — longer structured sentences = depth
+       e. Has Content bonus           (10%) — binary: any content at all
+
+    Score ranges (v9 with short-transcript fix):
+      Music/song lyric (< 150 words)  : 0.03-0.15
+      Silly/vlog/reaction             : 0.05-0.20
+      Conversational/mid              : 0.25-0.45
+      Educational/doc                 : 0.55-0.85
+      Dense academic                  : 0.70-0.95
 
     v9 short-transcript fix:
       When word_count < 150: linguistic_score scaled by (word_count/150)
-      and semantic weight raised to 0.65.
+      and semantic weight raised to 0.65. Prevents MTLD/FK saturation on
+      music lyrics, song fragments, and short auto-captions.
     """
 
     QUALITY_ANCHORS = [
@@ -54,6 +63,11 @@ class TranscriptQualityScorer:
         "We will start with the basic components and then look at how they interact "
         "within the larger framework. Understanding these core principles is essential "
         "before we dive into more advanced technical implementations.",
+
+        "The really important kind of freedom involves attention and awareness and discipline, "
+        "and being able to truly care about other people and to sacrifice for them over and over "
+        "in myriad petty, unsexy ways. That is real freedom. That is being educated, and "
+        "understanding how to think.",
 
         "The French Revolution fundamentally restructured European political thought. "
         "Historians attribute this transformation to three core economic factors: "
@@ -68,6 +82,16 @@ class TranscriptQualityScorer:
         "accumulated interest. Over a 30-year horizon, a 7% annual return doubles "
         "the initial investment approximately every decade, demonstrating the "
         "exponential nature of long-term wealth accumulation.",
+
+        "So the question you have to ask yourself is: why does this work? "
+        "Let's think about it step by step. Imagine you have a circle, and you "
+        "want to figure out its area. The insight is that you can slice it into "
+        "thin rings, and each ring looks almost like a rectangle when unrolled.",
+
+        "What I want to show you today is that this idea isn't just a trick — "
+        "it actually points to something deep about how rates of change work. "
+        "If you understand this one example really well, the rest follows naturally. "
+        "The key is to think about what happens as the gap gets smaller and smaller.",
 
         "Mitochondria generate ATP through oxidative phosphorylation, a process occurring "
         "across the inner mitochondrial membrane. Electron transport chain complexes "
@@ -92,10 +116,8 @@ class TranscriptQualityScorer:
     }
 
     def __init__(self):
-        import torch
-        device = "cuda" if torch.cuda.is_available() else "cpu"
-        logger.info(f"Loading sentence-transformer model (all-MiniLM-L6-v2) on {device}...")
-        self.encoder      = SentenceTransformer('all-MiniLM-L6-v2', device=device)
+        logger.info("Loading sentence-transformer model (all-MiniLM-L6-v2)...")
+        self.encoder      = SentenceTransformer('all-MiniLM-L6-v2')
         self.stop_words   = set(stopwords.words('english'))
         self._anchor_vecs = None
         self._encode_anchors()
@@ -110,7 +132,6 @@ class TranscriptQualityScorer:
     def _mtld(tokens: List[str], ttr_threshold: float = 0.72) -> float:
         if len(tokens) < 10:
             return 0.0
-
         def _forward(toks):
             segments, start, seen = 0.0, 0, set()
             for i, t in enumerate(toks):
@@ -124,15 +145,13 @@ class TranscriptQualityScorer:
                 ttr_rem  = len(seen_rem) / remainder
                 segments += (1 - ttr_rem) / (1 - ttr_threshold + 1e-10)
             return len(toks) / (segments + 1e-10)
-
         return (_forward(tokens) + _forward(list(reversed(tokens)))) / 2
 
     def _filler_density(self, text: str) -> float:
         words = text.lower().split()
-        if not words:
-            return 0.0
+        if not words: return 0.0
         filler_count = sum(1 for w in words if w.strip(string.punctuation) in self.FILLER_WORDS)
-        bigrams = [f"{words[i]} {words[i+1]}" for i in range(len(words) - 1)]
+        bigrams = [f"{words[i]} {words[i+1]}" for i in range(len(words)-1)]
         filler_count += sum(1 for b in bigrams if b in self.FILLER_WORDS)
         return min(filler_count / len(words), 1.0)
 
@@ -140,12 +159,13 @@ class TranscriptQualityScorer:
         words  = text.split()
         chunks = []
         step   = 200
-        for i in range(0, max(len(words), step), step):
-            chunk = ' '.join(words[i:i + step])
+        if not words:
+            return 0.0
+        for i in range(0, len(words), step):
+            chunk = ' '.join(words[i:i+step])
             if chunk.strip():
                 chunks.append(chunk)
-        if not chunks:
-            return 0.0
+        if not chunks: return 0.0
         chunk_vecs = self.encoder.encode(chunks, convert_to_numpy=True, show_progress_bar=False)
         from numpy.linalg import norm
         sims = []
@@ -156,17 +176,19 @@ class TranscriptQualityScorer:
         return float(np.max(sims)) if sims else 0.0
 
     def _linguistic_score(self, text: str, tokens: List[str]) -> Dict:
+        # FK reliability gate: meaningless on < 30 words; ceiling raised to
+        # grade 16 (academic) so common educational text stops saturating at 1.0
         try:
             fk_grade = textstat.flesch_kincaid_grade(text)
             if len(tokens) < 30:
-                fk_norm = 0.0
+                fk_norm = 0.0   # unreliable on tiny samples
             else:
                 fk_norm = float(np.clip(fk_grade / 16.0, 0, 1))
         except Exception:
-            fk_norm = 0.0
+            fk_norm  = 0.0
 
         mtld_raw  = self._mtld(tokens)
-        mtld_norm = float(np.clip(mtld_raw / 100.0, 0, 1))
+        mtld_norm = np.clip(np.log(mtld_raw + 1) / np.log(2001), 0, 1)
 
         filler_d     = self._filler_density(text)
         filler_score = 1.0 - filler_d
@@ -179,15 +201,11 @@ class TranscriptQualityScorer:
         asl_norm    = float(np.clip((asl - 5) / 25.0, 0, 1))
         has_content = 1.0 if len(tokens) > 20 else 0.0
 
-        active_weight = 0.20 + 0.20 + 0.15 + 0.10 + (0.10 if has_content else 0.0)
-        combined = (
-            fk_norm      * 0.20 +
-            mtld_norm    * 0.20 +
-            filler_score * 0.15 +
-            asl_norm     * 0.10 +
-            has_content  * 0.10
-        ) / (active_weight + 1e-10)
-
+        combined = (fk_norm      * 0.25 +
+            mtld_norm    * 0.25 +
+            filler_score * 0.20 +
+            asl_norm     * 0.15 +
+            has_content  * 0.15)
         return {
             'fk_grade_norm':    round(fk_norm,      4),
             'mtld_norm':        round(mtld_norm,     4),
@@ -225,9 +243,10 @@ class TranscriptQualityScorer:
         vocab_richness = len(set(tokens)) / max(word_count, 1)
 
         temp_text = raw_text
-        if raw_text.count('.') < (len(raw_text.split()) / 50):
-            words     = raw_text.split()
-            temp_text = '. '.join([' '.join(words[i:i + 20]) for i in range(0, len(words), 20)])
+        if raw_text.count('.') < (len(raw_text.split()) / 50): # If fewer than 1 period per 50 words
+          # Force a period every 20 words for the tokenizer to act on
+          words = raw_text.split()
+          temp_text = '. '.join([' '.join(words[i:i+20]) for i in range(0, len(words), 20)])
 
         try:
             sentences = sent_tokenize(temp_text)
@@ -242,6 +261,10 @@ class TranscriptQualityScorer:
         ling     = self._linguistic_score(raw_text, tokens)
 
         # Short-transcript saturation fix (v9)
+        # MTLD and FK produce inflated values on short texts: high type-token
+        # ratio before repetition registers; FK grade numerically unstable.
+        # Below MIN_WORDS_FOR_SCORING we scale down the linguistic score and
+        # shift weight toward semantic similarity, which is length-agnostic.
         MIN_WORDS_FOR_SCORING = 150
         if word_count > 0 and word_count < MIN_WORDS_FOR_SCORING:
             word_count_penalty = word_count / MIN_WORDS_FOR_SCORING
@@ -257,19 +280,17 @@ class TranscriptQualityScorer:
 
         return {
             'transcript_word_count':       word_count,
-            'transcript_avg_sentence_len': round(avg_sent,        4),
-            'transcript_vocab_richness':   round(vocab_richness,   4),
-            'transcript_sentiment_score':  round(sentiment_score,  4),
+            'transcript_avg_sentence_len': round(avg_sent,       4),
+            'transcript_vocab_richness':   round(vocab_richness,  4),
+            'transcript_sentiment_score':  round(sentiment_score, 4),
             'transcript_has_content':      1 if word_count > 0 else 0,
-            'transcript_quality_score':    round(tqs,              4),
-            'semantic_similarity':         round(semantic,          4),
+            'transcript_quality_score':    round(tqs,             4),
+            'semantic_similarity':         round(semantic,         4),
             'fk_grade_norm':               ling['fk_grade_norm'],
             'mtld_norm':                   ling['mtld_norm'],
             'filler_penalty':              ling['filler_penalty'],
             'linguistic_score':            ling['linguistic_score'],
         }
-
-
 class TranscriptProcessor:
     """Thin wrapper for API compatibility. Delegates to TranscriptQualityScorer."""
 

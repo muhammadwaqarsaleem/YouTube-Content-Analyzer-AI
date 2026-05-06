@@ -40,24 +40,27 @@ class ImpactFeatureEngineering:
         """
         logger.info("Refreshing quality features with transcript signals...")
 
-        word_count_norm = np.clip(df.get('transcript_word_count',     0).fillna(0) / 2000, 0, 1)
-        vocab_richness  = df.get('transcript_vocab_richness',          0).fillna(0)
-        sent_len_norm   = np.clip(df.get('transcript_avg_sentence_len', 0).fillna(0) / 20,  0, 1)
-        has_content     = df.get('transcript_has_content',             0).fillna(0)
+        word_count_norm = np.clip(df.get('transcript_word_count',    0).fillna(0) / 2000, 0, 1)
+        vocab_richness  = df.get('transcript_vocab_richness',         0).fillna(0)
+        sent_len_norm   = np.clip(df.get('transcript_avg_sentence_len',0).fillna(0) / 20,  0, 1)
+        has_content     = df.get('transcript_has_content',            0).fillna(0)
         max_nonzero     = df.get('tfidf_nonzero_count', pd.Series([1])).max()
         tfidf_diversity = np.clip(df.get('tfidf_nonzero_count', 0).fillna(0) / (max_nonzero + 1e-10), 0, 1)
 
         df['transcript_richness_score'] = np.clip(
-            word_count_norm * 0.35 +
-            vocab_richness  * 0.35 +
-            sent_len_norm   * 0.12 +
-            has_content     * 0.18,
-            0, 1
+        word_count_norm * 0.35 +   # was 0.30, absorbs tfidf's 0.15 proportionally
+        vocab_richness  * 0.35 +   # was 0.30
+        sent_len_norm   * 0.12 +   # was 0.10
+        has_content     * 0.18,    # was 0.15
+        0, 1
         )
 
+        sent_quality = np.clip((df.get('transcript_avg_sentence_len', 0).fillna(0) - 5) / 30, 0, 1)
         if 'transcript_quality_score' not in df.columns or (df['transcript_quality_score'] == 0).all():
-            df['transcript_quality_score'] = df['transcript_richness_score']
+          df['transcript_quality_score'] = df['transcript_richness_score']
 
+        # content_richness excludes transcript signals here to avoid
+        # double-counting inside _score_quality (transcript is scored separately)
         df['content_richness'] = (
             df['title_quality_score']      * 0.45 +
             df['description_completeness'] * 0.25 +
@@ -84,6 +87,11 @@ class ImpactFeatureEngineering:
             df['engagement_rate']  = np.where(df['view_count'] > 0,
                                               (df['total_engagement'] / df['view_count']) * 100, 0)
 
+        df['quality_engagement'] = np.where(
+            df['view_count'] > 0,
+            ((df['like_count'] + df['comment_count'] * 2) / df['view_count']) * 100,
+            0
+        )
         df['engagement_velocity']    = (df.get('likes_per_day', 0) + df.get('comments_per_day', 0))
         df['log_views']              = np.log1p(df['view_count'])
         df['log_likes']              = np.log1p(df['like_count'])
@@ -96,10 +104,10 @@ class ImpactFeatureEngineering:
 
     def _create_sentiment_features(self, df: pd.DataFrame) -> pd.DataFrame:
         logger.info("Creating sentiment features...")
-        for col in ['avg_sentiment', 'sentiment_polarity', 'sentiment_subjectivity',
-                    'positive_ratio', 'negative_ratio', 'neutral_ratio', 'sentiment_variance']:
-            if col not in df.columns or df[col].isna().all():
-                df[col] = 0.0
+        for col in ['avg_sentiment','sentiment_polarity','sentiment_subjectivity',
+                    'positive_ratio','negative_ratio','neutral_ratio','sentiment_variance']:
+                    if col not in df.columns or df[col].isna().all():
+                      df[col] = 0.0
 
         df['sentiment_strength']  = np.abs(df['sentiment_polarity'])
         df['approval_score'] = (df['positive_ratio'] / (df['positive_ratio'] + df['negative_ratio'] + 1e-10)) * 100
@@ -159,12 +167,14 @@ class ImpactFeatureEngineering:
         df['metadata_quality'] = (
             df.get('has_description', 0) * 0.25 +
             df.get('has_transcript',  0).astype(int) * 0.25 +
-            (df.get('tag_count',              0) > 0 ).astype(int) * 0.25 +
+            (df.get('tag_count',           0) > 0 ).astype(int) * 0.25 +
             (df.get('description_word_count', 0) > 10).astype(int) * 0.25
         )
         df['transcript_richness_score'] = 0.0
         df['transcript_quality_score']  = 0.0
 
+        # content_richness: title + description + metadata only (no transcript)
+        # transcript is scored separately in _score_quality to avoid double-counting
         df['content_richness'] = (
             df['title_quality_score']      * 0.45 +
             df['description_completeness'] * 0.25 +
