@@ -1,9 +1,7 @@
-/* ── Helpers ──────────────────────────────────────────────────────── */
 const $ = id => document.getElementById(id);
 const fmt = n => Number(n).toLocaleString();
 const pct = v => (v * 100).toFixed(1) + '%';
 
-/* ── Loading step sequencer ──────────────────────────────────────── */
 const STEPS = ['metadata','transcript','age','harm','impact','category','violence'];
 let stepTimer = null;
 function startSteps() {
@@ -21,7 +19,6 @@ function startSteps() {
 }
 function stopSteps() { clearTimeout(stepTimer); STEPS.forEach(s => { const el=$('step-'+s); if(el){el.classList.remove('active'); el.classList.add('done');} }); }
 
-/* ── UI State ────────────────────────────────────────────────────── */
 function showLoading() {
   $('hero').classList.add('hidden');
   $('resultsLayout').classList.add('hidden');
@@ -47,13 +44,11 @@ function showError(msg) {
   setTimeout(() => $('errorToast').classList.add('hidden'), 6000);
 }
 
-/* ── Animated bar helper ─────────────────────────────────────────── */
 function animateBar(el, pctVal, color) {
   el.style.background = color;
   requestAnimationFrame(() => { el.style.width = Math.min(pctVal * 100, 100) + '%'; });
 }
 
-/* ── SVG Gauge ───────────────────────────────────────────────────── */
 function buildGauge(score) {
   const r = 72, cx = 90, cy = 90;
   const startAngle = 135, sweep = 270;
@@ -85,7 +80,6 @@ function animateGauge(container) {
   }, 100);
 }
 
-/* ── Color helpers ───────────────────────────────────────────────── */
 const AGE_COLORS = { General:'#10b981', Teen:'#f59e0b', Mature:'#ef4444' };
 const HARM_COLORS = {
   'Harmless':'#10b981','Clickbait':'#f59e0b','Info Harm':'#fb923c',
@@ -96,7 +90,6 @@ function harmBadgeClass(label) { return label==='Harmless'?'badge-safe':label===
 function dimColor(val) { return val>=70?'#10b981':val>=55?'#f59e0b':'#ef4444'; }
 function scoreColor(s) { return s>=70?'#10b981':s>=55?'#f59e0b':'#ef4444'; }
 
-/* ── Render: Video Summary ───────────────────────────────────────── */
 function renderVideo(v) {
   $('videoSummary').innerHTML = `
   <div class="video-summary-grid">
@@ -118,7 +111,6 @@ function renderVideo(v) {
   </div>`;
 }
 
-/* ── Render: Age Classification ──────────────────────────────────── */
 function renderAge(data) {
   if (!data) { $('ageContent').innerHTML = '<p style="color:var(--muted)">No data returned.</p>'; return; }
   const probs = data.probabilities || {};
@@ -163,7 +155,6 @@ function renderAge(data) {
   });
 }
 
-/* ── Render: Harm Detection ──────────────────────────────────────── */
 function renderHarm(data) {
   if (!data) { $('harmContent').innerHTML = '<p style="color:var(--muted)">No data returned.</p>'; return; }
   const probs = data.probabilities || {};
@@ -217,7 +208,6 @@ function renderHarm(data) {
   });
 }
 
-/* ── Render: Impact ──────────────────────────────────────────────── */
 function renderImpact(data) {
   if (!data) { $('impactContent').innerHTML = '<p style="color:var(--muted)">No data returned.</p>'; return; }
   const s = data.score, level = data.level;
@@ -293,7 +283,6 @@ function renderImpact(data) {
   $('impactContent').querySelectorAll('.dim-fill').forEach(el => animateBar(el, parseFloat(el.dataset.val), el.style.background));
 }
 
-/* ── Render: Category ────────────────────────────────────────────── */
 function renderCategory(data) {
   if (!data) { $('categoryContent').innerHTML = '<p style="color:var(--muted)">No data returned.</p>'; return; }
   const cats = (data.all_categories||[]).slice(0,7);
@@ -319,7 +308,6 @@ function renderCategory(data) {
   $('categoryContent').querySelectorAll('.prob-fill').forEach(el => animateBar(el, parseFloat(el.dataset.val), el.style.background));
 }
 
-/* ── Render: Violence ────────────────────────────────────────────── */
 function renderViolence(data) {
   if (!data) { $('violenceContent').innerHTML = '<p style="color:var(--muted)">No data returned.</p>'; return; }
   const isV = data.is_violent;
@@ -348,7 +336,6 @@ function renderViolence(data) {
     ${data.tier_used===4?'<div class="recommendation-box" style="border-color:rgba(245,158,11,.3);color:#fbbf24">⚠️ Analysis ran on static thumbnail frames only — video streams unavailable.</div>':''}`;
 }
 
-/* ── Sidebar scroll spy ──────────────────────────────────────────── */
 function initScrollSpy() {
   const sections = ['sec-video','sec-age','sec-harm','sec-impact','sec-category','sec-violence'];
   const observer = new IntersectionObserver(entries => {
@@ -363,49 +350,165 @@ function initScrollSpy() {
   sections.forEach(id => { const el = $(id); if(el) observer.observe(el); });
 }
 
-/* ── Accordion ───────────────────────────────────────────────────── */
 function toggleAccordion(id) {
   const el = $(id);
   if (el) el.classList.toggle('open');
 }
 window.toggleAccordion = toggleAccordion;
 
-/* ── Main fetch & render ─────────────────────────────────────────── */
-$('analyzeForm').addEventListener('submit', async e => {
-  e.preventDefault();
-  const url = $('urlInput').value.trim();
-  if (!url) return;
+let currentUrl = '';
+
+function displayResults(data) {
+  renderVideo(data.video || {});
+  renderAge(data.age_classification);
+  renderHarm(data.harm_detection);
+  renderImpact(data.impact);
+  renderCategory(data.category);
+  renderViolence(data.violence);
+
+  // Cached badge
+  if (data.cached) {
+    $('cachedBadge').classList.remove('hidden');
+    $('reanalyzeBtn').classList.remove('hidden');
+  } else {
+    $('cachedBadge').classList.add('hidden');
+    $('reanalyzeBtn').classList.add('hidden');
+  }
+
+  showResults();
+  initScrollSpy();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+async function runAnalysis(url, force = false) {
   $('analyzeBtn').disabled = true;
   $('loadingVideoTitle').textContent = 'Analyzing: ' + url;
   showLoading();
+  currentUrl = url;
 
   try {
     const res = await fetch('/analyze', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ url })
+      body: JSON.stringify({ url, force })
     });
     const data = await res.json();
-    if (!res.ok) { showError(data.error || 'Analysis failed.'); $('analyzeBtn').disabled=false; return; }
-
-    renderVideo(data.video || {});
-    renderAge(data.age_classification);
-    renderHarm(data.harm_detection);
-    renderImpact(data.impact);
-    renderCategory(data.category);
-    renderViolence(data.violence);
-    showResults();
-    initScrollSpy();
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (!res.ok) { showError(data.error || 'Analysis failed.'); return; }
+    displayResults(data);
+    refreshHistoryCount();
   } catch (err) {
     showError('Network error: ' + err.message);
   } finally {
     $('analyzeBtn').disabled = false;
   }
+}
+
+$('analyzeForm').addEventListener('submit', e => {
+  e.preventDefault();
+  const url = $('urlInput').value.trim();
+  if (url) runAnalysis(url);
+});
+
+$('reanalyzeBtn').addEventListener('click', () => {
+  if (currentUrl) runAnalysis(currentUrl, true);
 });
 
 $('newAnalysisBtn').addEventListener('click', () => {
   $('urlInput').value = '';
+  currentUrl = '';
   showHero();
 });
+
+function openHistory() {
+  $('historyOverlay').classList.remove('hidden');
+  $('historyPanel').classList.remove('hidden');
+  fetchHistory();
+}
+function closeHistory() {
+  $('historyOverlay').classList.add('hidden');
+  $('historyPanel').classList.add('hidden');
+}
+
+$('historyToggleBtn').addEventListener('click', openHistory);
+$('historyCloseBtn').addEventListener('click', closeHistory);
+$('historyOverlay').addEventListener('click', closeHistory);
+
+async function fetchHistory() {
+  try {
+    const res = await fetch('/history');
+    const entries = await res.json();
+    renderHistoryList(entries);
+  } catch (e) { console.error('History fetch failed', e); }
+}
+
+async function refreshHistoryCount() {
+  try {
+    const res = await fetch('/history');
+    const entries = await res.json();
+    const badge = $('historyCount');
+    if (entries.length > 0) { badge.textContent = entries.length; badge.classList.add('visible'); }
+    else { badge.classList.remove('visible'); }
+  } catch (_) {}
+}
+
+function renderHistoryList(entries) {
+  const empty = $('historyEmpty');
+  const list = $('historyList');
+  if (!entries.length) { empty.style.display = ''; list.innerHTML = ''; return; }
+  empty.style.display = 'none';
+
+  list.innerHTML = entries.map(e => {
+    const d = new Date(e.analyzed_at);
+    const dateStr = d.toLocaleDateString(undefined, {month:'short',day:'numeric',year:'numeric'});
+    const thumb = e.thumbnail_url || `https://img.youtube.com/vi/${e.video_id}/default.jpg`;
+    return `<div class="history-card" data-video-id="${e.video_id}" data-url="${e.url || ''}">
+      <div class="history-card-thumb"><img src="${thumb}" alt="" onerror="this.style.display='none'"/></div>
+      <div class="history-card-info">
+        <div class="history-card-title">${e.title || e.video_id}</div>
+        <div class="history-card-meta">${e.channel || ''} · ${dateStr}</div>
+      </div>
+      <div class="history-card-actions">
+        <button class="history-delete-btn" data-vid="${e.video_id}" title="Delete">🗑</button>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Click card → load cached result
+  list.querySelectorAll('.history-card').forEach(card => {
+    card.addEventListener('click', ev => {
+      if (ev.target.closest('.history-delete-btn')) return;
+      const vid = card.dataset.videoId;
+      loadCachedResult(vid, card.dataset.url);
+    });
+  });
+
+  // Delete buttons
+  list.querySelectorAll('.history-delete-btn').forEach(btn => {
+    btn.addEventListener('click', async ev => {
+      ev.stopPropagation();
+      const vid = btn.dataset.vid;
+      await fetch(`/history/${vid}`, { method: 'DELETE' });
+      fetchHistory();
+      refreshHistoryCount();
+    });
+  });
+}
+
+async function loadCachedResult(videoId, url) {
+  closeHistory();
+  showLoading();
+  try {
+    const res = await fetch(`/history/${videoId}/result`);
+    const data = await res.json();
+    if (!res.ok) { showError(data.error || 'Could not load cached result.'); return; }
+    currentUrl = url || (data.video && data.video.url) || '';
+    $('urlInput').value = currentUrl;
+    displayResults(data);
+  } catch (err) {
+    showError('Failed to load result: ' + err.message);
+  }
+}
+
 $('toastClose').addEventListener('click', () => $('errorToast').classList.add('hidden'));
+
+refreshHistoryCount();

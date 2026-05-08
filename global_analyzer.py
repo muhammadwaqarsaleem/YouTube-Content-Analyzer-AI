@@ -1,8 +1,20 @@
-# Suppress TF / oneDNN / Keras noise before any heavy imports
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 os.environ['TF_ENABLE_ONEDNN_OPTS'] = '0'
 os.environ['PYTHONWARNINGS'] = 'ignore'
+
+# WinGet installs FFmpeg to Links dir
+import shutil as _shutil
+if not _shutil.which('ffmpeg'):
+    _ffmpeg_candidates = [
+        os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Microsoft', 'WinGet', 'Links'),
+        os.path.join(os.environ.get('PROGRAMFILES', ''), 'ffmpeg', 'bin'),
+        os.path.join(os.environ.get('USERPROFILE', ''), 'scoop', 'shims'),
+    ]
+    for _p in _ffmpeg_candidates:
+        if os.path.isdir(_p) and os.path.exists(os.path.join(_p, 'ffmpeg.exe')):
+            os.environ['PATH'] = _p + os.pathsep + os.environ.get('PATH', '')
+            break
 
 import re
 import sys
@@ -10,7 +22,6 @@ import warnings
 import concurrent.futures
 warnings.filterwarnings('ignore')
 
-# Force UTF-8 encoding for standard output to prevent emoji crashes on Windows
 sys.stdout.reconfigure(encoding='utf-8')
 
 import logging
@@ -18,11 +29,9 @@ from typing import Dict, List
 import pandas as pd
 import numpy as np
 
-# Silence absl/tf loggers
 logging.getLogger('absl').setLevel(logging.ERROR)
 logging.getLogger('tensorflow').setLevel(logging.ERROR)
 
-# Adjust sys.path to allow imports from subdirectories
 PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
 if PROJECT_ROOT not in sys.path:
     sys.path.append(PROJECT_ROOT)
@@ -33,7 +42,6 @@ from youtube_transcript_api import YouTubeTranscriptApi
 from textblob import TextBlob
 from vaderSentiment.vaderSentiment import SentimentIntensityAnalyzer
 
-# Import models
 from Age_Classification_Model.age_classification_main import AgeBracketModel
 from Clickbait_Model.harm_detector_Main import run_harm_detector
 from Impact_Model.impact_model_main import run_impact_model
@@ -216,6 +224,50 @@ class YouTubeVideoFetcher:
         except Exception as e:
             logger.debug(f"Strategy 3 failed: {e}")
 
+        try:
+            import tempfile as _tmpmod
+            logger.info(f"Strategy 4: Whisper audio-to-text for {video_id}...")
+            with _tmpmod.TemporaryDirectory() as tmpdir:
+                audio_path = os.path.join(tmpdir, f'{video_id}.%(ext)s')
+                # Locate ffmpeg for yt-dlp postprocessor
+                _ffmpeg_dir = os.path.dirname(_shutil.which('ffmpeg') or '')
+                ydl_audio_opts = {
+                    'format': 'bestaudio/best',
+                    'outtmpl': audio_path,
+                    'quiet': True,
+                    'no_warnings': True,
+                    'postprocessors': [{
+                        'key': 'FFmpegExtractAudio',
+                        'preferredcodec': 'mp3',
+                        'preferredquality': '64',
+                    }],
+                    'extractor_args': {'youtube': {'skip': ['dash', 'hls']}},
+                }
+                if _ffmpeg_dir:
+                    ydl_audio_opts['ffmpeg_location'] = _ffmpeg_dir
+
+                with yt_dlp.YoutubeDL(ydl_audio_opts) as ydl:
+                    ydl.download([url])
+
+                # Find the downloaded audio file
+                import glob as _glob2
+                audio_files = _glob2.glob(os.path.join(tmpdir, f'{video_id}.*'))
+                if audio_files:
+                    audio_file = audio_files[0]
+                    logger.info(f"Audio downloaded ({os.path.getsize(audio_file)/1024/1024:.1f} MB), running Whisper...")
+
+                    import whisper as _whisper
+                    model = _whisper.load_model('base')
+                    result = model.transcribe(audio_file, language='en', fp16=False)
+                    text = (result.get('text', '') or '').strip()
+                    if text:
+                        logger.info(f"Transcript fetched (strategy 4 — Whisper): {len(text):,} chars")
+                        return text
+        except ImportError:
+            logger.warning("Whisper not installed — skipping audio-to-text fallback. Install with: pip install openai-whisper")
+        except Exception as e:
+            logger.debug(f"Strategy 4 (Whisper) failed: {e}")
+
         logger.warning(f"All transcript strategies failed for: {video_id}")
         return ''
 
@@ -230,17 +282,12 @@ class GlobalOrchestrator:
         logger.info("Initialization complete.")
 
     def _run_pipeline(self, url: str):
-        """Shared core pipeline: fetches data and runs all models. Returns raw results tuple."""
         video_id = self.fetcher.extract_video_id(url)
 
         with concurrent.futures.ThreadPoolExecutor(max_workers=5) as executor:
-            # Phase 1: Start models that do their own fetching immediately
-            logger.info("Background: Starting Violence and Category models...")
             future_violence = executor.submit(self.violence_manager.analyze_violence, url, True)
             future_category = executor.submit(self.category_manager.analyze_video, url, True)
 
-            # Phase 2: Fetch data required for the other models
-            logger.info("--- Data Fetching (Sequential for Text Models) ---")
             metadata = self.fetcher.fetch_video_metadata(video_id)
             comments = self.fetcher.fetch_comments(video_id)
             transcript = self.fetcher.fetch_transcript(video_id)
@@ -248,14 +295,10 @@ class GlobalOrchestrator:
             title = metadata.get('title', '')
             description = metadata.get('description', '')
 
-            # Phase 3: Submit text-based models now that data is ready
-            logger.info("--- Model Inference (Text Models) ---")
             future_age = executor.submit(self.age_model.predict_age, transcript_text=transcript)
             future_harm = executor.submit(run_harm_detector, title=title, description=description, transcript=transcript)
             future_impact = executor.submit(run_impact_model, video_metadata=metadata, comments=comments, transcript_text=transcript)
 
-            # Phase 4: Wait for everything to complete
-            logger.info("Awaiting all results...")
             age_result = future_age.result()
             harm_result = future_harm.result()
             impact_result = future_impact.result()
@@ -282,12 +325,12 @@ class GlobalOrchestrator:
         logger.info(f"=== Starting Web Analysis for {url} ===")
         metadata, title, age_result, harm_result, impact_result, violence_out, category_out = self._run_pipeline(url)
 
-        # ── Video summary ──────────────────────────────────────────────────
         dur_s = int(metadata.get('duration_seconds', 0))
         dur_str = f"{dur_s // 3600:02d}:{(dur_s % 3600) // 60:02d}:{dur_s % 60:02d}" if dur_s >= 3600 \
                   else f"{dur_s // 60:02d}:{dur_s % 60:02d}"
 
         video_id = self.fetcher.extract_video_id(url)
+        # Include video_id in result for cache keying
         thumbnail_url = f"https://img.youtube.com/vi/{video_id}/hqdefault.jpg"
 
         video_section = {
@@ -303,7 +346,6 @@ class GlobalOrchestrator:
             "url":            url,
         }
 
-        # ── Age classification ─────────────────────────────────────────────
         if age_result:
             age_section = {
                 "label":       getattr(age_result, 'predicted_label', 'Unknown'),
@@ -326,7 +368,6 @@ class GlobalOrchestrator:
         else:
             age_section = None
 
-        # ── Harm / clickbait detection ─────────────────────────────────────
         if harm_result:
             harm_section = {
                 "label":         harm_result.get('label_name', 'Unknown'),
@@ -339,7 +380,6 @@ class GlobalOrchestrator:
         else:
             harm_section = None
 
-        # ── Impact score ───────────────────────────────────────────────────
         if impact_result:
             ta = impact_result.get('transcript_analysis', {}) or {}
             impact_section = {
@@ -369,7 +409,6 @@ class GlobalOrchestrator:
         else:
             impact_section = None
 
-        # ── Category classification ────────────────────────────────────────
         if category_out and category_out[0]:
             cat_res, _ = category_out
             category_section = {
@@ -383,7 +422,6 @@ class GlobalOrchestrator:
         else:
             category_section = None
 
-        # ── Violence classification ────────────────────────────────────────
         if violence_out and violence_out[0]:
             v_res, _ = violence_out
             category_section_viol = {
@@ -404,6 +442,7 @@ class GlobalOrchestrator:
             category_section_viol = None
 
         return {
+            "video_id":           video_id,
             "video":              video_section,
             "age_classification": age_section,
             "harm_detection":     harm_section,

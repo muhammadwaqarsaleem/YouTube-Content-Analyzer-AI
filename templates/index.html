@@ -12,18 +12,42 @@
 </head>
 <body>
 
-  <!-- ─── HEADER ─────────────────────────────────────────────────────── -->
   <header class="site-header">
     <div class="header-inner">
       <div class="logo">
         <span class="logo-icon">▶</span>
         <span class="logo-text">ContentAI</span>
       </div>
-      <div class="header-badge">AI-Powered Analysis</div>
+      <div class="header-actions">
+        <button class="history-btn" id="historyToggleBtn" title="View analysis history">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span>History</span>
+          <span class="history-count" id="historyCount"></span>
+        </button>
+        <div class="header-badge">AI-Powered Analysis</div>
+      </div>
     </div>
   </header>
 
-  <!-- ─── HERO / INPUT ──────────────────────────────────────────────── -->
+  <div class="history-overlay hidden" id="historyOverlay"></div>
+  <aside class="history-panel hidden" id="historyPanel">
+    <div class="history-panel-header">
+      <h2 class="history-panel-title">📋 Analysis History</h2>
+      <button class="history-close-btn" id="historyCloseBtn">✕</button>
+    </div>
+    <div class="history-panel-body" id="historyPanelBody">
+      <div class="history-empty" id="historyEmpty">
+        <div class="history-empty-icon">📭</div>
+        <div class="history-empty-text">No analyses yet</div>
+        <div class="history-empty-sub">Analyze a video and it will appear here</div>
+      </div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </aside>
+
   <section class="hero" id="hero">
     <div class="hero-bg-orbs">
       <div class="orb orb-1"></div>
@@ -59,7 +83,6 @@
         <div class="search-hint">Try any YouTube video URL — we'll handle the rest</div>
       </form>
 
-      <!-- Model badges -->
       <div class="model-badges">
         <span class="model-badge">🔞 Age Rating</span>
         <span class="model-badge">🎣 Harm Detection</span>
@@ -70,7 +93,6 @@
     </div>
   </section>
 
-  <!-- ─── LOADING STATE ─────────────────────────────────────────────── -->
   <section class="loading-section hidden" id="loadingSection">
     <div class="loading-card">
       <div class="loading-spinner-ring">
@@ -115,10 +137,8 @@
     </div>
   </section>
 
-  <!-- ─── RESULTS ───────────────────────────────────────────────────── -->
   <div class="results-layout hidden" id="resultsLayout">
 
-    <!-- Sticky sidebar -->
     <aside class="results-sidebar" id="resultsSidebar">
       <div class="sidebar-inner">
         <div class="sidebar-label">Jump to section</div>
@@ -130,25 +150,26 @@
           <a href="#sec-category" class="sidebar-link"        data-section="sec-category"> <span class="sl-icon">🏷️</span> Category</a>
           <a href="#sec-violence" class="sidebar-link"        data-section="sec-violence"> <span class="sl-icon">🚨</span> Violence</a>
         </nav>
+        <div class="sidebar-cached-badge hidden" id="cachedBadge">
+          <span class="cached-icon">⚡</span>
+          <span class="cached-text">Cached Result</span>
+        </div>
+        <button class="sidebar-reanalyze-btn hidden" id="reanalyzeBtn">🔄 Re-analyze</button>
         <button class="sidebar-new-btn" id="newAnalysisBtn">+ New Analysis</button>
       </div>
     </aside>
 
-    <!-- Main results area -->
     <main class="results-main">
 
-      <!-- ── 0: Video Summary ─────────────────────────────────────── -->
       <section class="result-card card-video" id="sec-video">
         <div class="card-header">
           <span class="card-icon">🎬</span>
           <h2 class="card-title">Video Overview</h2>
         </div>
         <div class="video-summary" id="videoSummary">
-          <!-- Populated by JS -->
         </div>
       </section>
 
-      <!-- ── 1: Age Classification ─────────────────────────────── -->
       <section class="result-card card-age" id="sec-age">
         <div class="card-header">
           <span class="card-icon">🔞</span>
@@ -156,11 +177,9 @@
           <span class="card-model-tag">Hierarchical RoBERTa</span>
         </div>
         <div id="ageContent">
-          <!-- Populated by JS -->
         </div>
       </section>
 
-      <!-- ── 2: Harm / Clickbait ───────────────────────────────── -->
       <section class="result-card card-harm" id="sec-harm">
         <div class="card-header">
           <span class="card-icon">🎣</span>
@@ -168,11 +187,9 @@
           <span class="card-model-tag">RoBERTa 7-class</span>
         </div>
         <div id="harmContent">
-          <!-- Populated by JS -->
         </div>
       </section>
 
-      <!-- ── 3: Impact Score ────────────────────────────────────── -->
       <section class="result-card card-impact" id="sec-impact">
         <div class="card-header">
           <span class="card-icon">📊</span>
@@ -180,11 +197,9 @@
           <span class="card-model-tag">Multi-dimension v9</span>
         </div>
         <div id="impactContent">
-          <!-- Populated by JS -->
         </div>
       </section>
 
-      <!-- ── 4: Category ────────────────────────────────────────── -->
       <section class="result-card card-category" id="sec-category">
         <div class="card-header">
           <span class="card-icon">🏷️</span>
@@ -192,11 +207,9 @@
           <span class="card-model-tag">LightGBM / XGBoost</span>
         </div>
         <div id="categoryContent">
-          <!-- Populated by JS -->
         </div>
       </section>
 
-      <!-- ── 5: Violence ────────────────────────────────────────── -->
       <section class="result-card card-violence" id="sec-violence">
         <div class="card-header">
           <span class="card-icon">🚨</span>
@@ -204,14 +217,12 @@
           <span class="card-model-tag">ResNet-50 / Computer Vision</span>
         </div>
         <div id="violenceContent">
-          <!-- Populated by JS -->
         </div>
       </section>
 
     </main>
   </div>
 
-  <!-- ─── ERROR TOAST ───────────────────────────────────────────────── -->
   <div class="error-toast hidden" id="errorToast">
     <span class="toast-icon">⚠️</span>
     <span class="toast-msg" id="toastMsg">An error occurred.</span>
